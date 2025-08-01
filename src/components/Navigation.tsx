@@ -35,7 +35,9 @@ export function Navigation() {
   
   // ホームに戻る際に初期状態にリセット
   const handleHomeClick = () => {
-    router.push('/?reset=true')
+    // カスタムイベントを発行してページをリセット
+    window.dispatchEvent(new CustomEvent('resetToInitialState'))
+    router.push('/')
   }
 
   useEffect(() => {

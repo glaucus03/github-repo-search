@@ -3,7 +3,7 @@
 // GitHub Repository Search ホームページ
 import { useState, useRef, useEffect } from 'react'
 import { Button, Card, CardBody, Spinner } from '@heroui/react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { MagnifyingGlassIcon, StarIcon, EyeIcon } from '@heroicons/react/24/outline'
 import { Pagination } from '@/components'
 import { useLiveSearch } from '@/hooks'
@@ -27,6 +27,7 @@ interface Repository {
 
 export default function HomePage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [searchQuery, setSearchQuery] = useState('')
   const [repositories, setRepositories] = useState<Repository[]>([])
   const [loading, setLoading] = useState(false)
@@ -51,16 +52,27 @@ export default function HomePage() {
     setCurrentQuery('')
   }
   
-  // ページ読み込み時にURLパラメータをチェックしてリセット
+  // URLパラメータの変更を監視してリセット
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search)
-    const shouldReset = urlParams.get('reset')
+    const shouldReset = searchParams.get('reset')
     
     if (shouldReset === 'true') {
       resetToInitialState()
       // URLからresetパラメータを削除
-      const newUrl = window.location.pathname
-      window.history.replaceState({}, '', newUrl)
+      router.replace('/')
+    }
+  }, [searchParams, router])
+  
+  // カスタムイベントを監視してリセット
+  useEffect(() => {
+    const handleReset = () => {
+      resetToInitialState()
+    }
+    
+    window.addEventListener('resetToInitialState', handleReset)
+    
+    return () => {
+      window.removeEventListener('resetToInitialState', handleReset)
     }
   }, [])
   
