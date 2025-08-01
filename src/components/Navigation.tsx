@@ -32,6 +32,11 @@ export function Navigation() {
   const { favoriteCount, loadFavorites } = useUIStore()
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
+  
+  // ホームに戻る際に初期状態にリセット
+  const handleHomeClick = () => {
+    router.push('/?reset=true')
+  }
 
   useEffect(() => {
     setMounted(true)
@@ -68,8 +73,8 @@ export function Navigation() {
           variant="light"
           isIconOnly
           className="text-black dark:text-gray-300"
-          onClick={() => router.push('/')}
-          aria-label="ホームに戻る"
+          onClick={handleHomeClick}
+          aria-label="ホームに戻る（初期状態にリセット）"
         >
           <MagnifyingGlassIcon className="w-5 h-5" />
         </Button>

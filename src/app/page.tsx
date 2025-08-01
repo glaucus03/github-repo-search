@@ -1,7 +1,7 @@
 'use client'
 
 // GitHub Repository Search ホームページ
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Button, Card, CardBody, Spinner } from '@heroui/react'
 import { useRouter } from 'next/navigation'
 import { MagnifyingGlassIcon, StarIcon, EyeIcon } from '@heroicons/react/24/outline'
@@ -39,6 +39,30 @@ export default function HomePage() {
   
   // 検索結果の開始位置へのref
   const searchResultsRef = useRef<HTMLDivElement>(null)
+  
+  // 初期状態にリセットする関数
+  const resetToInitialState = () => {
+    setSearchQuery('')
+    setRepositories([])
+    setLoading(false)
+    setError(null)
+    setCurrentPage(1)
+    setTotalCount(0)
+    setCurrentQuery('')
+  }
+  
+  // ページ読み込み時にURLパラメータをチェックしてリセット
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const shouldReset = urlParams.get('reset')
+    
+    if (shouldReset === 'true') {
+      resetToInitialState()
+      // URLからresetパラメータを削除
+      const newUrl = window.location.pathname
+      window.history.replaceState({}, '', newUrl)
+    }
+  }, [])
   
   // リアルタイム検索結果数の取得
   const {
@@ -129,7 +153,11 @@ export default function HomePage() {
     <div className="container mx-auto px-4 py-8">
       {/* ヘッダー */}
       <div className="text-center mb-12">
-        <h1 className="text-5xl font-bold mb-6 text-gray-900 dark:text-white">
+        <h1 
+          className="text-5xl font-bold mb-6 text-gray-900 dark:text-white cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+          onClick={resetToInitialState}
+          title="クリックして初期状態に戻る"
+        >
           GitHub Repository Search
         </h1>
         <p className="text-xl !text-black dark:text-gray-300 max-w-3xl mx-auto">
