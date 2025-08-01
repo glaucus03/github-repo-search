@@ -1,7 +1,7 @@
 'use client'
 
 // GitHub Repository Search ホームページ
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Button, Card, CardBody, Spinner } from '@heroui/react'
 import { useRouter } from 'next/navigation'
 import { MagnifyingGlassIcon, StarIcon, EyeIcon } from '@heroicons/react/24/outline'
@@ -36,6 +36,9 @@ export default function HomePage() {
   const [currentQuery, setCurrentQuery] = useState('')
   const ITEMS_PER_PAGE = 30
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE)
+  
+  // 検索結果の開始位置へのref
+  const searchResultsRef = useRef<HTMLDivElement>(null)
   
   // リアルタイム検索結果数の取得
   const {
@@ -73,6 +76,16 @@ export default function HomePage() {
       setRepositories(data.items || [])
       setTotalCount(data.total_count || 0)
       setCurrentPage(page)
+      
+      // ページ変更時は検索結果の先頭にスクロール（少し遅延させて確実に実行）
+      if (page > 1 && searchResultsRef.current) {
+        setTimeout(() => {
+          searchResultsRef.current?.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start' 
+          })
+        }, 100)
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : '検索中にエラーが発生しました')
       setRepositories([])
@@ -234,7 +247,7 @@ export default function HomePage() {
         )}
 
         {repositories.length > 0 && (
-          <div className="max-w-4xl mx-auto space-y-4">
+          <div ref={searchResultsRef} className="max-w-4xl mx-auto space-y-4">
             {repositories.map((repo) => (
               <div
                 key={repo.id}
