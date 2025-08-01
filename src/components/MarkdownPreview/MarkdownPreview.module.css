@@ -1,0 +1,171 @@
+/* GitHub風Markdownスタイル */
+
+.markdownWrapper {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+  font-size: 16px;
+  line-height: 1.5;
+  word-wrap: break-word;
+  color: #24292f;
+}
+
+/* ダークモード対応 */
+.markdownWrapper[data-color-mode="dark"] {
+  color: #c9d1d9;
+}
+
+/* バッジ（shields.io等）のスタイル調整 */
+.markdownWrapper :global(img[src*="shields.io"]),
+.markdownWrapper :global(img[src*="badge"]),
+.markdownWrapper :global(img[src*="img.shields"]),
+.markdownWrapper :global(img[src*="circleci"]),
+.markdownWrapper :global(img[src*="travis-ci"]),
+.markdownWrapper :global(img[src*="codecov"]),
+.markdownWrapper :global(img[src*="coveralls"]),
+.markdownWrapper :global(img[src*="david-dm"]),
+.markdownWrapper :global(img[src*="npm"]),
+.markdownWrapper :global(img[src*="github.com/badges"]),
+.markdownWrapper :global(img[alt*="badge"]),
+.markdownWrapper :global(img[alt*="shield"]),
+.markdownWrapper :global(img[alt*="build"]),
+.markdownWrapper :global(img[alt*="status"]) {
+  display: inline-block !important;
+  margin: 0 2px !important;
+  vertical-align: middle !important;
+  max-width: none !important;
+  height: auto !important;
+  border: none !important;
+  border-radius: 3px !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+/* SVGファイルの表示を確実にする */
+.markdownWrapper :global(img[src$=".svg"]),
+.markdownWrapper :global(img[src*=".svg?"]) {
+  display: inline-block !important;
+  margin: 0 2px !important;
+  vertical-align: middle !important;
+  max-width: none !important;
+  height: auto !important;
+  border: none !important;
+  background: transparent !important;
+  /* SVGファイルの読み込みを強制 */
+  min-width: 20px !important;
+  min-height: 20px !important;
+}
+
+/* SVGのロード失敗時のフォールバック */
+.markdownWrapper :global(img[src$=".svg"]:not([alt=""])) {
+  font-size: 0; /* altテキストを非表示 */
+}
+
+/* 画像全般のスタイル */
+.markdownWrapper :global(img) {
+  max-width: 100%;
+  height: auto;
+}
+
+/* picture要素のスタイル */
+.markdownWrapper :global(picture) {
+  display: block;
+  margin: 16px auto;
+  text-align: center;
+}
+
+/* picture内のimgのスタイル */
+.markdownWrapper :global(picture img) {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+/* 通常の画像（バッジ以外） */
+.markdownWrapper :global(img:not([src*="shields.io"]):not([src*="badge"]):not([alt*="badge"])) {
+  display: block;
+  margin: 16px auto;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.markdownWrapper[data-color-mode="dark"] :global(img:not([src*="shields.io"]):not([src*="badge"]):not([alt*="badge"])) {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* バッジを含む段落の中央寄せ */
+.markdownWrapper :global(p) {
+  text-align: center;
+  margin: 16px 0;
+}
+
+/* テキストを含む段落は左寄せ */
+.markdownWrapper :global(p:has(a)),
+.markdownWrapper :global(p:not(:has(img))) {
+  text-align: left;
+}
+
+/* 見出しのスタイル調整 */
+.markdownWrapper :global(h1),
+.markdownWrapper :global(h2),
+.markdownWrapper :global(h3),
+.markdownWrapper :global(h4),
+.markdownWrapper :global(h5),
+.markdownWrapper :global(h6) {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: inherit;
+}
+
+/* リンクのスタイル */
+.markdownWrapper :global(a) {
+  color: #0969da;
+  text-decoration: none;
+}
+
+.markdownWrapper[data-color-mode="dark"] :global(a) {
+  color: #58a6ff;
+}
+
+.markdownWrapper :global(a:hover) {
+  text-decoration: underline;
+}
+
+/* コードのスタイル */
+.markdownWrapper :global(code) {
+  padding: 0.2em 0.4em;
+  margin: 0;
+  font-size: 85%;
+  background-color: rgba(175, 184, 193, 0.2);
+  border-radius: 3px;
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
+}
+
+.markdownWrapper[data-color-mode="dark"] :global(code) {
+  background-color: rgba(110, 118, 129, 0.4);
+  color: #c9d1d9;
+}
+
+/* プレフォーマットテキスト */
+.markdownWrapper :global(pre) {
+  padding: 16px;
+  overflow: auto;
+  font-size: 85%;
+  line-height: 1.45;
+  background-color: #f6f8fa;
+  border-radius: 6px;
+  margin: 16px 0;
+}
+
+.markdownWrapper[data-color-mode="dark"] :global(pre) {
+  background-color: #161b22;
+  color: #c9d1d9;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 767px) {
+  .markdownWrapper {
+    padding: 15px;
+  }
+}

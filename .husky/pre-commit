@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# lint-staged を実行
+npx lint-staged
+
+# テストを実行（高速なユニットテストのみ）
+npm run test -- --passWithNoTests --watchAll=false --coverage=false
