@@ -1,0 +1,95 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# top-most EditorConfig file
+root = true
+
+# 全てのファイルに適用
+[*]
+indent_style = space
+indent_size = 2
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+# Pythonファイル
+[*.py]
+indent_size = 4
+
+# Goファイル
+[*.go]
+indent_style = tab
+
+# Makefileとタブベースのファイル
+[{Makefile,makefile,*.mk}]
+indent_style = tab
+
+# Batchファイル（Windows）
+[*.{bat,cmd}]
+end_of_line = crlf
+
+# Markdownファイル
+[*.md]
+trim_trailing_whitespace = false
+
+# JSONファイル
+[*.json]
+indent_size = 2
+
+# YAMLファイル
+[*.{yml,yaml}]
+indent_size = 2
+
+# XML/HTMLファイル
+[*.{xml,html,xhtml}]
+indent_size = 2
+
+# CSSファイル
+[*.{css,scss,sass}]
+indent_size = 2
+
+# JavaScriptファイル
+[*.{js,jsx,ts,tsx}]
+indent_size = 2
+
+# Javaファイル
+[*.java]
+indent_size = 4
+
+# C/C++ファイル
+[*.{c,cpp,h,hpp}]
+indent_size = 4
+
+# C#ファイル
+[*.cs]
+indent_size = 4
+
+# PHPファイル
+[*.php]
+indent_size = 4
+
+# Rubyファイル
+[*.rb]
+indent_size = 2
+
+# Shellスクリプト
+[*.{sh,bash,zsh,fish}]
+indent_size = 2
+
+# 設定ファイル
+[*.{conf,config,ini,cfg}]
+indent_size = 2
+
+# Dockerファイル
+[{Dockerfile,*.dockerfile}]
+indent_size = 2
+
+# Claude Code設定ファイル
+[CLAUDE.md]
+indent_size = 2
+
+[.claude.json]
+indent_size = 2
+
+[.claude/settings.local.json]
+indent_size = 2

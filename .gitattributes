@@ -1,0 +1,94 @@
+# 改行コード設定
+* text=auto eol=lf
+
+# Windows固有ファイル
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# バイナリファイル
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.mov binary
+*.mp4 binary
+*.mp3 binary
+*.flv binary
+*.fla binary
+*.swf binary
+*.gz binary
+*.zip binary
+*.7z binary
+*.ttf binary
+*.eot binary
+*.woff binary
+*.woff2 binary
+*.pdf binary
+*.exe binary
+*.dll binary
+*.so binary
+*.dylib binary
+
+# アーカイブファイル
+*.tar linguist-generated=true
+*.gz linguist-generated=true
+*.zip linguist-generated=true
+
+# 生成ファイル
+package-lock.json linguist-generated=true
+yarn.lock linguist-generated=true
+*.min.js linguist-generated=true
+*.min.css linguist-generated=true
+dist/ linguist-generated=true
+build/ linguist-generated=true
+coverage/ linguist-generated=true
+
+# ドキュメント
+*.md text
+*.txt text
+*.json text
+*.xml text
+*.yml text
+*.yaml text
+
+# プログラミング言語
+*.js text
+*.jsx text
+*.ts text
+*.tsx text
+*.py text
+*.java text
+*.c text
+*.cpp text
+*.h text
+*.hpp text
+*.cs text
+*.php text
+*.rb text
+*.go text
+*.rs text
+*.sh text
+*.bash text
+*.zsh text
+*.fish text
+
+# 設定ファイル
+*.conf text
+*.config text
+*.ini text
+*.cfg text
+.gitignore text
+.gitattributes text
+.editorconfig text
+Dockerfile text
+docker-compose.yml text
+docker-compose.yaml text
+Makefile text
+CMakeLists.txt text
+
+# Claude Code設定
+CLAUDE.md text
+.claude.json text
+.claude/settings.local.json text

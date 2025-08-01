@@ -1,0 +1,127 @@
+name: Claude Code Validation
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate-claude-config:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: CLAUDE.mdの存在確認
+      run: |
+        if [ ! -f "CLAUDE.md" ]; then
+          echo "❌ CLAUDE.mdが見つかりません"
+          exit 1
+        fi
+        echo "✅ CLAUDE.mdが存在します"
+        
+    - name: .claude.jsonの存在確認
+      run: |
+        if [ ! -f ".claude.json" ]; then
+          echo "❌ .claude.jsonが見つかりません"
+          exit 1
+        fi
+        echo "✅ .claude.jsonが存在します"
+        
+    - name: .claude.jsonの構文チェック
+      run: |
+        if ! jq empty .claude.json; then
+          echo "❌ .claude.jsonの構文が正しくありません"
+          exit 1
+        fi
+        echo "✅ .claude.jsonの構文は正しいです"
+        
+    - name: .claude/settings.local.jsonの存在確認
+      run: |
+        if [ ! -f ".claude/settings.local.json" ]; then
+          echo "❌ .claude/settings.local.jsonが見つかりません"
+          exit 1
+        fi
+        echo "✅ .claude/settings.local.jsonが存在します"
+        
+    - name: .claude/settings.local.jsonの構文チェック
+      run: |
+        if ! jq empty .claude/settings.local.json; then
+          echo "❌ .claude/settings.local.jsonの構文が正しくありません"
+          exit 1
+        fi
+        echo "✅ .claude/settings.local.jsonの構文は正しいです"
+        
+    - name: .gitignoreの確認
+      run: |
+        if [ ! -f ".gitignore" ]; then
+          echo "❌ .gitignoreが見つかりません"
+          exit 1
+        fi
+        echo "✅ .gitignoreが存在します"
+        
+    - name: .editorconfigの確認
+      run: |
+        if [ ! -f ".editorconfig" ]; then
+          echo "❌ .editorconfigが見つかりません"
+          exit 1
+        fi
+        echo "✅ .editorconfigが存在します"
+        
+    - name: .env.exampleの確認
+      run: |
+        if [ ! -f ".env.example" ]; then
+          echo "❌ .env.exampleが見つかりません"
+          exit 1
+        fi
+        echo "✅ .env.exampleが存在します"
+        
+    - name: 基本ファイルの行数チェック
+      run: |
+        echo "📊 ファイルの行数確認:"
+        echo "- CLAUDE.md: $(wc -l < CLAUDE.md) 行"
+        echo "- .claude.json: $(wc -l < .claude.json) 行"
+        echo "- .claude/settings.local.json: $(wc -l < .claude/settings.local.json) 行"
+        echo "- .gitignore: $(wc -l < .gitignore) 行"
+        echo "- .editorconfig: $(wc -l < .editorconfig) 行"
+        echo "- .env.example: $(wc -l < .env.example) 行"
+        echo "- README.md: $(wc -l < README.md) 行"
+        
+    - name: CLAUDE.mdの内容確認
+      run: |
+        echo "📝 CLAUDE.mdの内容チェック:"
+        if grep -q "プロジェクト概要" CLAUDE.md; then
+          echo "✅ プロジェクト概要セクションがあります"
+        else
+          echo "⚠️ プロジェクト概要セクションを追加することをお勧めします"
+        fi
+        
+        if grep -q "技術スタック" CLAUDE.md; then
+          echo "✅ 技術スタックセクションがあります"
+        else
+          echo "⚠️ 技術スタックセクションを追加することをお勧めします"
+        fi
+        
+        if grep -q "コーディング規約" CLAUDE.md; then
+          echo "✅ コーディング規約セクションがあります"
+        else
+          echo "⚠️ コーディング規約セクションを追加することをお勧めします"
+        fi
+        
+    - name: .claude.jsonのMCPサーバー設定確認
+      run: |
+        echo "🔧 MCPサーバー設定チェック:"
+        if jq -e '.mcpServers' .claude.json > /dev/null; then
+          echo "✅ mcpServersが設定されています"
+          echo "設定されているサーバー:"
+          jq -r '.mcpServers | keys[]' .claude.json | sed 's/^/- /'
+        else
+          echo "⚠️ mcpServersが設定されていません"
+        fi
+        
+    - name: 検証完了
+      run: |
+        echo "🎉 すべての基本チェックが完了しました！"
+        echo "Claude Codeプロジェクトテンプレートの設定が正しく行われています。"
