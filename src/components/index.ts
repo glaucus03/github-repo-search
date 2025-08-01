@@ -1,5 +1,7 @@
 // UIコンポーネントのエクスポート
 export { SearchForm } from './SearchForm'
+export { LiveSearchIndicator } from './LiveSearchIndicator'
+export { Pagination } from './Pagination'
 export { RepositoryCard } from './RepositoryCard'
 export { InfiniteScrollGrid } from './InfiniteScrollGrid'
 export { Navigation } from './Navigation'
