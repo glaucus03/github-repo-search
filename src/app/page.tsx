@@ -1,10 +1,12 @@
 'use client'
 
 // GitHub Repository Search ホームページ
-import { useState, useEffect, useCallback, useRef } from 'react'
-import { Button, Input, Card, CardBody, Spinner } from '@heroui/react'
+import { useState } from 'react'
+import { Button, Card, CardBody, Spinner } from '@heroui/react'
 import { useRouter } from 'next/navigation'
 import { MagnifyingGlassIcon, StarIcon, EyeIcon } from '@heroicons/react/24/outline'
+import { Pagination } from '@/components'
+import { useLiveSearch } from '@/hooks'
 
 // クライアントコンポーネントでは動的レンダリング設定を削除
 
@@ -28,30 +30,37 @@ export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [repositories, setRepositories] = useState<Repository[]>([])
   const [loading, setLoading] = useState(false)
-  const [loadingMore, setLoadingMore] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
-  const [hasMore, setHasMore] = useState(true)
+  const [totalCount, setTotalCount] = useState(0)
   const [currentQuery, setCurrentQuery] = useState('')
-  const observerRef = useRef<HTMLDivElement>(null)
+  const ITEMS_PER_PAGE = 30
+  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE)
+  
+  // リアルタイム検索結果数の取得
+  const {
+    totalCount: liveCount,
+    loading: liveLoading,
+    error: liveError,
+  } = useLiveSearch(searchQuery)
 
-  // 新しい検索を実行
-  const handleSearch = async () => {
+  // 検索を実行（指定されたページで）
+  const performSearch = async (page: number = 1) => {
     if (!searchQuery.trim()) return
 
     setLoading(true)
     setError(null)
-    setCurrentPage(1)
-    setHasMore(true)
-    setCurrentQuery(searchQuery)
+    if (page === 1) {
+      setCurrentQuery(searchQuery)
+    }
     
     try {
       const params = new URLSearchParams({
         q: searchQuery,
         sort: 'stars',
         order: 'desc',
-        per_page: '20',
-        page: '1'
+        per_page: ITEMS_PER_PAGE.toString(),
+        page: page.toString()
       })
       
       const response = await fetch(`/api/repositories/search?${params}`)
@@ -62,81 +71,29 @@ export default function HomePage() {
       
       const data = await response.json()
       setRepositories(data.items || [])
-      setHasMore(data.items?.length === 20 && data.total_count > 20)
+      setTotalCount(data.total_count || 0)
+      setCurrentPage(page)
     } catch (err) {
       setError(err instanceof Error ? err.message : '検索中にエラーが発生しました')
       setRepositories([])
+      setTotalCount(0)
     } finally {
       setLoading(false)
     }
   }
 
-  // 追加データを読み込み
-  const loadMore = useCallback(async () => {
-    if (!currentQuery || !hasMore || loadingMore) return
+  // 新しい検索を実行
+  const handleSearch = () => {
+    performSearch(1)
+  }
 
-    setLoadingMore(true)
-    
-    try {
-      const nextPage = currentPage + 1
-      const params = new URLSearchParams({
-        q: currentQuery,
-        sort: 'stars',
-        order: 'desc',
-        per_page: '20',
-        page: nextPage.toString()
-      })
-      
-      const response = await fetch(`/api/repositories/search?${params}`)
-      
-      if (!response.ok) {
-        // レート制限やその他のAPIエラーの場合、それ以上の読み込みを停止
-        setHasMore(false)
-        if (response.status === 403) {
-          console.warn('GitHub API レート制限に達しました')
-        } else {
-          console.warn(`API エラー: ${response.status} ${response.statusText}`)
-        }
-        return
-      }
-      
-      const data = await response.json()
-      const newItems = data.items || []
-      
-      if (newItems.length === 0) {
-        // データがもうない場合
-        setHasMore(false)
-        return
-      }
-      
-      setRepositories(prev => [...prev, ...newItems])
-      setCurrentPage(nextPage)
-      setHasMore(newItems.length === 20 && nextPage < 50) // GitHub APIは最大1000件（50ページ）まで
-    } catch (err) {
-      console.error('追加データの読み込みエラー:', err)
-      setHasMore(false) // エラーが発生した場合、それ以上の読み込みを停止
-    } finally {
-      setLoadingMore(false)
+  // ページ変更ハンドラー
+  const handlePageChange = (page: number) => {
+    if (currentQuery) {
+      setSearchQuery(currentQuery) // 現在の検索クエリを使用
+      performSearch(page)
     }
-  }, [currentQuery, currentPage, hasMore, loadingMore])
-
-  // Intersection Observerによる無限スクロール
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasMore && !loadingMore) {
-          loadMore()
-        }
-      },
-      { threshold: 0.1 }
-    )
-
-    if (observerRef.current) {
-      observer.observe(observerRef.current)
-    }
-
-    return () => observer.disconnect()
-  }, [loadMore, hasMore, loadingMore])
+  }
 
   // カードクリック時の詳細ページ遷移
   const handleCardClick = (repo: Repository, event: React.MouseEvent) => {
@@ -194,6 +151,7 @@ export default function HomePage() {
             検索する
           </Button>
         </div>
+        
       </div>
 
       {/* 検索結果 */}
@@ -218,12 +176,45 @@ export default function HomePage() {
           <Card className="border-gray-300 dark:border-gray-600">
             <CardBody className="text-center py-12">
               <MagnifyingGlassIcon className="w-16 h-16 mx-auto mb-4 text-black dark:text-gray-400" />
-              <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">
-                検索結果が見つかりませんでした
-              </h3>
-              <p className="!text-black dark:text-gray-300">
-                「{searchQuery}」に一致するリポジトリが見つかりませんでした
-              </p>
+              
+              {/* リアルタイム検索結果数またはエラーを表示 */}
+              {liveLoading ? (
+                <>
+                  <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">
+                    検索中...
+                  </h3>
+                  <p className="!text-black dark:text-gray-300">
+                    「{searchQuery}」を検索しています
+                  </p>
+                </>
+              ) : liveError ? (
+                <>
+                  <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">
+                    検索エラー
+                  </h3>
+                  <p className="!text-black dark:text-gray-300">
+                    {liveError}
+                  </p>
+                </>
+              ) : liveCount > 0 ? (
+                <>
+                  <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">
+                    「{searchQuery}」の検索結果: {liveCount.toLocaleString()}件
+                  </h3>
+                  <p className="!text-black dark:text-gray-300">
+                    検索ボタンを押して結果を表示してください
+                  </p>
+                </>
+              ) : (
+                <>
+                  <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">
+                    検索結果が見つかりませんでした
+                  </h3>
+                  <p className="!text-black dark:text-gray-300">
+                    「{searchQuery}」に一致するリポジトリが見つかりませんでした
+                  </p>
+                </>
+              )}
             </CardBody>
           </Card>
         )}
@@ -301,18 +292,17 @@ export default function HomePage() {
                 </div>
             ))}
             
-            {/* 無限スクロール用のローディング表示 */}
-            {loadingMore && (
-              <div className="text-center py-8">
-                <Spinner size="lg" />
-                <p className="mt-4 !text-black dark:text-gray-300">さらに読み込み中...</p>
-              </div>
-            )}
-            
-            {/* Intersection Observer用の要素 */}
-            {hasMore && !loadingMore && repositories.length > 0 && (
-              <div ref={observerRef} className="h-4" />
-            )}
+            {/* ページネーション */}
+            <div className="mt-8">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                totalItems={totalCount}
+                itemsPerPage={ITEMS_PER_PAGE}
+                onPageChange={handlePageChange}
+                loading={loading}
+              />
+            </div>
           </div>
         )}
       </div>
