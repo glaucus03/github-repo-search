@@ -27,11 +27,16 @@ task-github-search/
 │   │   ├── env.ts         # 環境変数管理
 │   │   ├── utils.ts       # 共通ユーティリティ
 │   │   ├── constants.ts   # 定数定義
-│   │   └── validators.ts  # バリデーション
+│   │   ├── validators.ts  # バリデーション
+│   │   ├── errorHandler.ts # エラーハンドリング
+│   │   ├── search-domain.ts # 検索ドメインロジック
+│   │   ├── storage.ts     # ローカルストレージ管理
+│   │   └── seo.ts         # SEO関連ユーティリティ
 │   ├── hooks/             # カスタムReact Hooks
 │   │   ├── useRepositorySearch.ts # 検索フック
 │   │   ├── useRepositoryDetail.ts # 詳細取得フック
-│   │   └── useLiveSearch.ts # リアルタイム検索フック
+│   │   ├── useLiveSearch.ts # リアルタイム検索フック
+│   │   └── useDebounce.ts # デバウンス処理フック
 │   ├── store/             # 状態管理（Zustand）
 │   │   ├── searchStore.ts # 検索状態管理
 │   │   └── uiStore.ts     # UI状態管理
@@ -68,18 +73,19 @@ InitializationProvider.tsx # 初期化プロバイダー
 #### 検索・表示機能
 ```
 RepositoryCard.tsx         # リポジトリカード表示
-OptimizedRepositoryCard.tsx # 最適化版リポジトリカード
+SearchForm.tsx             # 検索フォーム
+SearchResults.tsx          # 検索結果表示
 Pagination.tsx             # ページネーション
-RepositoryCardSkeleton.tsx # ローディングスケルトン
+LoadingSpinner.tsx         # ローディングスピナー・スケルトン
 MarkdownPreview/           # Markdownプレビュー
 ```
 
 #### SEO・構造化データ
 ```
-SEO/
-├── StructuredData.tsx     # 構造化データ
-├── Breadcrumbs.tsx        # パンくずリスト
-└── SEOMonitor.tsx         # SEO監視（開発用）
+SEO.tsx                    # SEO機能統合コンポーネント
+                          # - 構造化データ
+                          # - パンくずリスト
+                          # - SEO監視（開発用）
 ```
 
 ### ページ構成（src/app/）
@@ -97,15 +103,17 @@ SEO/
 ### 検索フロー
 1. ユーザーが検索クエリを入力
 2. リアルタイム検索結果数取得（useLiveSearch）
-3. 検索ボタンクリックで詳細検索実行
+3. デバウンス処理による最適化された検索実行
 4. GitHub API経由でリポジトリデータ取得
 5. 結果をページネーション付きで表示
+6. ヘッダーアイコンクリックで初期状態にリセット
 
 ### リポジトリ詳細フロー
 1. リポジトリカードクリック
 2. 動的ルーティングで詳細ページ遷移
 3. リポジトリ詳細情報・README・言語統計を並行取得
-4. 詳細画面に統合表示
+4. オーナーアバター付きで詳細画面に統合表示
+5. README画像の自動GitHub rawURL変換
 
 ### API認証フロー
 1. 環境変数からGitHub Personal Access Token取得

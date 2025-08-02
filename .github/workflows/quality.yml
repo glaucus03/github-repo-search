@@ -1,0 +1,154 @@
+name: Code Quality
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  # ESLint・Prettier・TypeScript
+  linting:
+    name: コード品質チェック
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: ESLint
+        run: npm run lint -- --format=@microsoft/eslint-formatter-sarif --output-file=eslint-results.sarif
+        continue-on-error: true
+
+      - name: Upload ESLint results to GitHub
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: eslint-results.sarif
+          wait-for-processing: true
+
+      - name: Prettier check
+        run: npx prettier --check .
+
+      - name: TypeScript type check
+        run: npx tsc --noEmit --pretty
+
+  # コード複雑度分析
+  complexity-analysis:
+    name: コード複雑度分析
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install complexity tools
+        run: npm install -g plato madge
+
+      - name: Generate complexity report
+        run: |
+          # Plato - コード複雑度レポート
+          mkdir -p reports/complexity
+          plato -r -d reports/complexity src/
+
+          # Madge - 依存関係分析
+          madge --circular --extensions ts,tsx src/
+          madge --image reports/dependencies.svg src/
+
+      - name: Upload complexity reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: complexity-reports
+          path: reports/
+          retention-days: 30
+
+  # セキュリティスキャン
+  security-scan:
+    name: セキュリティスキャン
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Semgrep
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: >-
+            p/javascript
+            p/typescript
+            p/react
+            p/nextjs
+
+      - name: npm audit
+        run: npm audit --audit-level=moderate --json > audit-results.json
+        continue-on-error: true
+
+      - name: Upload audit results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-audit
+          path: audit-results.json
+          retention-days: 30
+
+  # コードメトリクス
+  code-metrics:
+    name: コードメトリクス
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 全履歴を取得
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate metrics
+        run: |
+          # ファイル・ライン数統計
+          echo "## Code Statistics" > metrics.md
+          echo "\`\`\`" >> metrics.md
+          find src -name "*.ts" -o -name "*.tsx" | xargs wc -l | tail -1 >> metrics.md
+          echo "\`\`\`" >> metrics.md
+          
+          # バンドルサイズ分析
+          npm run build
+          npx @next/bundle-analyzer
+
+      - name: Comment metrics on commit
+        uses: peter-evans/commit-comment@v3
+        with:
+          body-path: metrics.md

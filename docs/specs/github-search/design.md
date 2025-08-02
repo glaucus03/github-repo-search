@@ -352,37 +352,36 @@ interface UIState {
 
 | 技術 | バージョン | 選定理由 |
 |------|------------|----------|
-| **Next.js** | 14.x | **App Router必須**、Server Components、RSC対応 |
-| **React** | 18.x | UI構築、Server Components対応 |
+| **Next.js** | 15.4.5 | **App Router必須**、Server Components、RSC対応 |
+| **React** | 19.1.0 | UI構築、Server Components対応、並行機能 |
 | **TypeScript** | 5.x | 型安全性、App Router完全対応 |
-| **HeroUI** | 2.x | React 18対応、アクセシビリティ |
-| **Tailwind CSS** | 3.x | ユーティリティファースト、App Router最適化 |
+| **HeroUI** | 2.8.2 | React 19対応、アクセシビリティ |
+| **Tailwind CSS** | 4.x | ユーティリティファースト、App Router最適化 |
 
 #### 3.1.2 状態管理・データフェッチ
 
 | 技術 | バージョン | 選定理由 |
 |------|------------|----------|
-| **Zustand** | 4.x | 軽量、シンプルなAPI、TypeScript対応 |
-| **SWR** | 2.x | キャッシュ、リアルタイム更新、エラーハンドリング |
+| **Zustand** | 5.0.7 | 軽量、シンプルなAPI、TypeScript対応 |
+| **SWR** | 2.3.4 | キャッシュ、リアルタイム更新、エラーハンドリング |
 
 #### 3.1.3 テスト・品質管理ツール
 
 | 技術 | バージョン | 選定理由 |
 |------|------------|----------|
-| **Jest** | 29.x | React Testing Library統合、App Router対応 |
-| **@testing-library/react** | 14.x | Server/Client Components対応 |
-| **@testing-library/jest-dom** | 6.x | DOM assertion拡張 |
-| **Playwright** | 1.x | E2Eテスト、クロスブラウザ対応 |
-| **Vitest** | 1.x | 高速ユニットテスト（Jest代替検討） |
+| **Jest** | 30.0.5 | React Testing Library統合、App Router対応 |
+| **@testing-library/react** | 16.3.0 | Server/Client Components対応 |
+| **@testing-library/jest-dom** | 6.6.4 | DOM assertion拡張 |
+| **Playwright** | 1.54.1 | E2Eテスト、クロスブラウザ対応 |
 
 #### 3.1.4 開発・ビルドツール
 
 | 技術 | バージョン | 選定理由 |
 |------|------------|----------|
-| **pnpm** | 8.x | 高速インストール、ディスク容量効率 |
-| **ESLint** | 8.x | App Router対応ルール |
-| **Prettier** | 3.x | コードフォーマッター |
-| **Husky** | 8.x | Git hooks、テスト自動実行 |
+| **npm** | latest | 標準パッケージマネージャー |
+| **ESLint** | 9.x | App Router対応ルール |
+| **Prettier** | latest | コードフォーマッター |
+| **Husky** | 9.1.7 | Git hooks、テスト自動実行 |
 
 ### 3.2 選定理由詳細
 
