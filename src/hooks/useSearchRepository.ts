@@ -24,7 +24,7 @@ interface UseSearchRepositoryReturn {
   currentPage: number
   totalCount: number
   currentQuery: string
-  searchResultsRef: React.RefObject<HTMLDivElement>
+  searchResultsRef: React.RefObject<HTMLDivElement | null>
   
   // Actions
   performSearch: (query: string, page?: number) => Promise<void>

@@ -2,7 +2,12 @@
 import { useCallback, useEffect } from 'react'
 import useSWR from 'swr'
 
-import { createSearchQuery } from '@/lib/github-api'
+import { 
+  validateSearchQuery, 
+  buildGitHubSearchQuery, 
+  createPopularRepositoryQuery, 
+  createRecentRepositoryQuery 
+} from '@/lib/search-domain'
 import { useSearchStore, buildSearchQuery } from '@/store/searchStore'
 import type { GitHubSearchResponse } from '@/types/github'
 
@@ -48,15 +53,23 @@ export function useRepositorySearch(options: UseRepositorySearchOptions = {}) {
   const getSearchKey = useCallback(() => {
     if (!query.trim() || !enabled) return null
     
-    const searchQuery = buildSearchQuery(useSearchStore.getState())
-    return [`/api/repositories/search?${new URLSearchParams({
+    const state = useSearchStore.getState()
+    const searchQuery = buildSearchQuery(state)
+    console.log('SWR search query:', searchQuery)
+    
+    const urlParams = new URLSearchParams({
       q: searchQuery.q,
-      ...(searchQuery.sort && { sort: searchQuery.sort }),
-      ...(searchQuery.order && { order: searchQuery.order }),
+      ...(searchQuery.sort && searchQuery.sort !== 'best-match' && { sort: searchQuery.sort }),
+      ...(searchQuery.order && searchQuery.sort !== 'best-match' && { order: searchQuery.order }),
       per_page: (searchQuery.per_page || 30).toString(),
       page: (searchQuery.page || 1).toString(),
-    }).toString()}`]
-  }, [query, enabled])
+    })
+    
+    const apiUrl = `/api/repositories/search?${urlParams.toString()}`
+    console.log('API URL:', apiUrl)
+    
+    return [apiUrl]
+  }, [query, page, enabled])
 
   // SWR フェッチャー関数（API Routeを使用）
   const fetcher = useCallback(
@@ -125,8 +138,10 @@ export function useRepositorySearch(options: UseRepositorySearchOptions = {}) {
   // 検索実行関数
   const search = useCallback(
     async (searchQuery: string, resetPage = true) => {
-      if (!searchQuery.trim()) {
-        setError('検索クエリを入力してください')
+      // ドメインロジックによるバリデーション
+      const validation = validateSearchQuery(searchQuery)
+      if (!validation.isValid) {
+        setError(validation.errors[0] || '無効な検索クエリです')
         return
       }
 
@@ -163,18 +178,26 @@ export function useRepositorySearch(options: UseRepositorySearchOptions = {}) {
         order?: 'desc' | 'asc'
       } = {}
     ) => {
-      const enhancedQuery = createSearchQuery(searchQuery, options)
+      // ドメインロジックを使用してクエリを構築
+      const enhancedQuery = buildGitHubSearchQuery({
+        query: searchQuery,
+        language: options.language,
+        minStars: options.minStars,
+        maxStars: options.maxStars,
+        sort: options.sort || 'best-match',
+        order: options.order || 'desc'
+      })
       await search(enhancedQuery)
     },
     [search]
   )
 
-  // 人気のリポジトリを取得（API Route経由）
+  // 人気のリポジトリを取得（ドメインロジック使用）
   const searchPopular = useCallback(
     async (language?: string) => {
       try {
         setLoading(true)
-        const query = language ? `stars:>1 language:${language}` : 'stars:>1'
+        const query = createPopularRepositoryQuery(language)
         const url = `/api/repositories/search?${new URLSearchParams({
           q: query,
           sort: 'stars',
@@ -202,12 +225,12 @@ export function useRepositorySearch(options: UseRepositorySearchOptions = {}) {
     [setLoading, setResults, setTotalCount, setHasMore, setError]
   )
 
-  // 最近更新されたリポジトリを取得（API Route経由）
+  // 最近更新されたリポジトリを取得（ドメインロジック使用）
   const searchRecent = useCallback(
     async (language?: string) => {
       try {
         setLoading(true)
-        const query = language ? `stars:>10 language:${language}` : 'stars:>10'
+        const query = createRecentRepositoryQuery(language)
         const url = `/api/repositories/search?${new URLSearchParams({
           q: query,
           sort: 'updated',

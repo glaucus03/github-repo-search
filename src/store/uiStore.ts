@@ -17,7 +17,7 @@ interface UIStore extends UIState {
   collapseSearchForm: () => void
   
   // ソート・フィルター関連
-  setSortOption: (sort: 'stars' | 'forks' | 'updated') => void
+  setSortOption: (sort: 'stars' | 'forks' | 'updated' | 'best-match') => void
   setOrderOption: (order: 'desc' | 'asc') => void
   toggleOrder: () => void
   
@@ -70,7 +70,7 @@ interface UIStore extends UIState {
 const initialState: UIState = {
   theme: 'system',
   isSearchFormExpanded: false,
-  selectedSortOption: 'stars',
+  selectedSortOption: 'best-match',
   selectedOrderOption: 'desc',
 }
 
@@ -196,7 +196,22 @@ export const useUIStore = create<UIStore>()(
           set(
             (state) => {
               const id = `notification-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
-              const newNotification = { ...notification, id }
+              const duration = notification.duration || 3000 // デフォルト3秒
+              const newNotification = { ...notification, id, duration }
+              
+              // 自動削除タイマーを設定
+              setTimeout(() => {
+                const currentState = _get()
+                if (currentState.notifications.some(n => n.id === id)) {
+                  set(
+                    (state) => ({
+                      notifications: state.notifications.filter((n) => n.id !== id),
+                    }),
+                    false,
+                    'ui/autoRemoveNotification'
+                  )
+                }
+              }, duration)
               
               return {
                 notifications: [...state.notifications, newNotification],

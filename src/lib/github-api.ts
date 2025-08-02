@@ -18,7 +18,7 @@ import {
   // catchAndLog 
 } from './errorHandler'
 
-class GitHubApiClient {
+export class GitHubApiClient {
   private baseUrl: string
   private token?: string
 

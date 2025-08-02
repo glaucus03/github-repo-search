@@ -38,7 +38,7 @@ interface SearchResultsProps {
   onPageChange: (page: number) => void
   
   // Refs
-  searchResultsRef: React.RefObject<HTMLDivElement>
+  searchResultsRef: React.RefObject<HTMLDivElement | null>
 }
 
 export function SearchResults({

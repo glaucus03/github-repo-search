@@ -1,29 +1,88 @@
 'use client'
 
 // GitHub Repository Search ホームページ
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
-import { SearchFormComponent } from '@/components/SearchFormComponent'
-import { SearchResults } from '@/components/SearchResults'
-import { useSearchRepository } from '@/hooks/useSearchRepository'
-import { useSearchUI } from '@/hooks/useSearchUI'
+import { SearchForm, SearchResults } from '@/components'
+import { useRepositorySearch } from '@/hooks/useRepositorySearch'
+import { useSearchStore } from '@/store/searchStore'
+import { useUIStore } from '@/store/uiStore'
 
 export default function HomePage() {
-  const searchRepository = useSearchRepository()
-  const searchUI = useSearchUI()
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const initialQuery = searchParams.get('q') || ''
+  
+  const { setQuery } = useSearchStore()
+  const { addNotification } = useUIStore()
+  
+  const {
+    results,
+    loading,
+    error,
+    hasMore,
+    totalCount,
+    search,
+    loadMore,
+    searchPopular,
+  } = useRepositorySearch()
 
-  // 初期化処理
+  // 初期クエリの設定
   useEffect(() => {
-    searchUI.initializeFromURL(searchRepository.performSearch)
-  }, [])
+    if (initialQuery) {
+      setQuery(initialQuery)
+      search(initialQuery)
+    } else {
+      // クエリがない場合は人気のリポジトリを表示
+      searchPopular()
+    }
+  }, [initialQuery, setQuery, search, searchPopular])
 
-  // 検索実行ハンドラー
-  const handleSearch = async () => {
-    await searchUI.handleSearch(searchRepository.performSearch)
+  // 検索実行
+  const handleSearch = async (query: string) => {
+    try {
+      await search(query)
+      
+      // URLを更新
+      const url = new URL(window.location.href)
+      if (query) {
+        url.searchParams.set('q', query)
+      } else {
+        url.searchParams.delete('q')
+      }
+      router.replace(url.pathname + url.search)
+      
+      addNotification({
+        type: 'success',
+        message: `"${query}" の検索が完了しました`,
+      })
+    } catch {
+      addNotification({
+        type: 'error',
+        message: '検索中にエラーが発生しました',
+      })
+    }
+  }
+
+  // リポジトリ選択
+  const handleRepositorySelect = (repository: { owner: { login: string }; name: string }) => {
+    router.push(`/repository/${repository.owner.login}/${repository.name}`)
+  }
+
+  // エラー時の再試行
+  const handleRetry = () => {
+    if (initialQuery) {
+      search(initialQuery)
+    } else {
+      searchPopular()
+    }
   }
 
   // リセットハンドラー
   const handleReset = () => {
-    searchUI.resetToInitialState(searchRepository.resetState)
+    setQuery('')
+    router.replace('/')
+    searchPopular()
   }
 
   return (
@@ -40,26 +99,27 @@ export default function HomePage() {
       </div>
 
       {/* 検索フォーム */}
-      <SearchFormComponent
-        searchQuery={searchUI.searchQuery}
-        onSearchQueryChange={searchUI.setSearchQuery}
-        onSearch={handleSearch}
-        disabled={searchRepository.loading}
-      />
+      <SearchForm onSearch={handleSearch} />
 
       {/* 検索結果 */}
       <SearchResults
-        searchQuery={searchUI.searchQuery}
-        currentQuery={searchRepository.currentQuery}
-        repositories={searchRepository.repositories}
-        loading={searchRepository.loading}
-        error={searchRepository.error}
-        currentPage={searchRepository.currentPage}
-        totalPages={searchRepository.totalPages}
-        totalCount={searchRepository.totalCount}
-        onRepositoryClick={searchRepository.handleRepositoryClick}
-        onPageChange={searchRepository.handlePageChange}
-        searchResultsRef={searchRepository.searchResultsRef}
+        searchQuery={initialQuery}
+        currentQuery={initialQuery}
+        repositories={results}
+        loading={loading}
+        error={error}
+        currentPage={1}
+        totalPages={Math.ceil(totalCount / 30)}
+        totalCount={totalCount}
+        onRepositoryClick={(repository, event) => {
+          event.preventDefault()
+          handleRepositorySelect(repository)
+        }}
+        onPageChange={(page) => {
+          // ページングは無限スクロールで処理
+          loadMore()
+        }}
+        searchResultsRef={{ current: null }}
       />
     </div>
   )

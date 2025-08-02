@@ -3,6 +3,7 @@ import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 
 import { SearchHistoryStorage } from '@/lib/storage'
+import { validateSearchQuery, calculateRepositoryQuality, calculateSearchStatistics } from '@/lib/search-domain'
 import type { SearchState } from '@/types'
 import type { GitHubRepository, GitHubSearchQuery } from '@/types/github'
 
@@ -20,7 +21,7 @@ interface SearchStore extends SearchState {
   
   // 検索オプション
   searchOptions: {
-    sort: 'stars' | 'forks' | 'updated'
+    sort: 'stars' | 'forks' | 'updated' | 'best-match'
     order: 'desc' | 'asc'
     language?: string
     minStars?: number
@@ -34,6 +35,23 @@ interface SearchStore extends SearchState {
   removeFromHistory: (query: string) => void
   clearHistory: () => void
   loadHistory: () => void
+  
+  // ドメインロジック統合
+  queryValidation: { isValid: boolean; errors: string[] }
+  validateQuery: (query: string) => boolean
+  getRepositoryQuality: (repository: GitHubRepository) => number
+  getSearchStatistics: () => {
+    totalCount: number
+    averageStars: number
+    averageForks: number
+    languageDistribution: Map<string, number>
+    qualityDistribution: {
+      excellent: number
+      good: number
+      fair: number
+      poor: number
+    }
+  }
   
   // リセット機能
   resetSearch: () => void
@@ -50,8 +68,13 @@ const initialState: Pick<SearchStore, keyof SearchState> = {
   totalCount: 0,
 }
 
+const initialQueryValidation = {
+  isValid: true,
+  errors: []
+}
+
 const initialSearchOptions: SearchStore['searchOptions'] = {
-  sort: 'stars',
+  sort: 'best-match',
   order: 'desc',
 }
 
@@ -59,6 +82,7 @@ export const useSearchStore = create<SearchStore>()(
   devtools(
     (set, get) => ({
       ...initialState,
+      queryValidation: initialQueryValidation,
       searchOptions: initialSearchOptions,
       searchHistory: [],
 
@@ -178,6 +202,22 @@ export const useSearchStore = create<SearchStore>()(
           false,
           'search/resetResults'
         ),
+
+      // ドメインロジック統合機能
+      validateQuery: (query) => {
+        const validation = validateSearchQuery(query)
+        set({ queryValidation: validation }, false, 'search/validateQuery')
+        return validation.isValid
+      },
+
+      getRepositoryQuality: (repository) => {
+        return calculateRepositoryQuality(repository)
+      },
+
+      getSearchStatistics: () => {
+        const { results } = get()
+        return calculateSearchStatistics(results)
+      },
     }),
     {
       name: 'search-store',
