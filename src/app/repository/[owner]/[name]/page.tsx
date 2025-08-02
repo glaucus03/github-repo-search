@@ -338,22 +338,6 @@ export default function RepositoryPage({ params }: RepositoryPageProps) {
           </Card>
 
 
-          {/* ホームページリンク */}
-          {repository.homepage && (
-            <Card className="shadow-sm mt-6">
-              <CardBody className="p-6">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">リンク</h3>
-                <Link 
-                  href={repository.homepage} 
-                  isExternal 
-                  className="flex items-center gap-2 text-blue-500 hover:text-blue-600"
-                >
-                  <LinkIcon className="w-4 h-4" />
-                  <span className="text-sm">ホームページ</span>
-                </Link>
-              </CardBody>
-            </Card>
-          )}
 
         </div>
       </div>

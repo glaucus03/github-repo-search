@@ -6,202 +6,161 @@
 task-github-search/
 ├── src/                    # ソースコード
 │   ├── app/               # Next.js App Router
-│   │   ├── (auth)/        # 認証関連ページ
-│   │   ├── (dashboard)/   # ダッシュボード関連ページ
 │   │   ├── api/           # API Routes
+│   │   │   └── repositories/ # GitHub API関連エンドポイント
+│   │   ├── repository/    # リポジトリ詳細ページ
+│   │   │   └── [owner]/   # 動的ルーティング
+│   │   │       └── [name]/
 │   │   ├── globals.css    # グローバルスタイル
 │   │   ├── layout.tsx     # ルートレイアウト
-│   │   └── page.tsx       # ホームページ
+│   │   ├── providers.tsx  # プロバイダー設定
+│   │   └── page.tsx       # ホームページ（検索画面）
 │   ├── components/        # UIコンポーネント
-│   │   ├── ui/            # 基本UIコンポーネント（shadcn/ui）
-│   │   ├── forms/         # フォームコンポーネント
-│   │   ├── layout/        # レイアウトコンポーネント
-│   │   └── features/      # 機能別コンポーネント
+│   │   ├── ui/            # 基本UIコンポーネント
+│   │   ├── SEO/           # SEO関連コンポーネント
+│   │   ├── Navigation.tsx # ナビゲーション
+│   │   ├── RepositoryCard.tsx # リポジトリカード
+│   │   ├── Pagination.tsx # ページネーション
+│   │   └── ...            # その他コンポーネント
 │   ├── lib/               # ユーティリティとライブラリ
-│   │   ├── auth.ts        # 認証ロジック
-│   │   ├── database.ts    # データベース設定
-│   │   ├── github.ts      # GitHub API クライアント
-│   │   └── utils.ts       # 共通ユーティリティ
+│   │   ├── github-api.ts  # GitHub API クライアント
+│   │   ├── env.ts         # 環境変数管理
+│   │   ├── utils.ts       # 共通ユーティリティ
+│   │   ├── constants.ts   # 定数定義
+│   │   └── validators.ts  # バリデーション
 │   ├── hooks/             # カスタムReact Hooks
+│   │   ├── useRepositorySearch.ts # 検索フック
+│   │   ├── useRepositoryDetail.ts # 詳細取得フック
+│   │   └── useLiveSearch.ts # リアルタイム検索フック
 │   ├── store/             # 状態管理（Zustand）
+│   │   ├── searchStore.ts # 検索状態管理
+│   │   └── uiStore.ts     # UI状態管理
 │   ├── types/             # TypeScript型定義
-│   └── styles/            # スタイル関連ファイル
+│   │   ├── github.ts      # GitHub API型定義
+│   │   └── index.ts       # 共通型定義
+│   └── config/            # 設定ファイル
 ├── public/                # 静的ファイル
 ├── docs/                  # ドキュメント
-│   └── steering/          # プロジェクト設計ドキュメント
-├── .env.local             # 環境変数（ローカル）
+│   ├── steering/          # プロジェクト設計ドキュメント
+│   └── specs/             # 機能仕様書
+├── e2e/                   # E2Eテスト
+├── .env.example           # 環境変数サンプル
 ├── .gitignore
-├── next.config.js         # Next.js設定
+├── next.config.ts         # Next.js設定
 ├── package.json
-├── tailwind.config.js     # Tailwind CSS設定
+├── tailwind.config.ts     # Tailwind CSS設定
 ├── tsconfig.json          # TypeScript設定
 └── README.md
 ```
 
 ## 主要コンポーネント構成
 
-### 機能別コンポーネント（src/components/features/）
+### コアコンポーネント（src/components/）
 
-#### 検索機能
+#### ナビゲーション・レイアウト
 ```
-search/
-├── SearchForm.tsx         # 検索フォーム
-├── SearchFilters.tsx      # 検索フィルター
-├── SearchResults.tsx      # 検索結果一覧
-├── RepositoryCard.tsx     # リポジトリカード
-└── SearchHistory.tsx      # 検索履歴
+Navigation.tsx             # ヘッダーナビゲーション
+ErrorBoundary.tsx          # エラー境界
+NotificationSystem.tsx     # 通知システム
+InitializationProvider.tsx # 初期化プロバイダー
 ```
 
-#### タスク管理機能
+#### 検索・表示機能
 ```
-tasks/
-├── TaskList.tsx           # タスク一覧
-├── TaskItem.tsx           # 個別タスク
-├── TaskForm.tsx           # タスク作成・編集フォーム
-├── TaskFilters.tsx        # タスクフィルター
-└── TaskStats.tsx          # タスク統計
+RepositoryCard.tsx         # リポジトリカード表示
+OptimizedRepositoryCard.tsx # 最適化版リポジトリカード
+Pagination.tsx             # ページネーション
+RepositoryCardSkeleton.tsx # ローディングスケルトン
+MarkdownPreview/           # Markdownプレビュー
 ```
 
-#### ユーザー機能
+#### SEO・構造化データ
 ```
-user/
-├── UserProfile.tsx        # ユーザープロフィール
-├── UserSettings.tsx       # ユーザー設定
-└── AuthButton.tsx         # 認証ボタン
+SEO/
+├── StructuredData.tsx     # 構造化データ
+├── Breadcrumbs.tsx        # パンくずリスト
+└── SEOMonitor.tsx         # SEO監視（開発用）
 ```
 
 ### ページ構成（src/app/）
 
-#### 公開ページ
-- `/` - ランディングページ
-- `/about` - サービス紹介
-
-#### ダッシュボード（認証必須）
-- `/dashboard` - メインダッシュボード
-- `/dashboard/search` - リポジトリ検索
-- `/dashboard/tasks` - タスク管理
-- `/dashboard/favorites` - お気に入りリポジトリ
-- `/dashboard/settings` - ユーザー設定
+#### メインページ
+- `/` - 検索ホームページ
+- `/repository/[owner]/[name]` - リポジトリ詳細ページ
 
 #### API Routes
-- `/api/auth/callback` - OAuth認証コールバック
-- `/api/github/search` - GitHub検索API
-- `/api/tasks` - タスクCRUD API
-- `/api/user` - ユーザー情報API
+- `/api/repositories/search` - GitHub検索API
+- `/api/repositories/[owner]/[name]` - リポジトリ詳細API
 
 ## データフロー
 
-### 認証フロー
-1. GitHub OAuth認証
-2. Supabaseでユーザー情報管理
-3. セッション状態の管理
-
 ### 検索フロー
-1. フロントエンドから検索クエリ送信
-2. GitHub API経由でデータ取得
-3. 結果の表示と保存機能
+1. ユーザーが検索クエリを入力
+2. リアルタイム検索結果数取得（useLiveSearch）
+3. 検索ボタンクリックで詳細検索実行
+4. GitHub API経由でリポジトリデータ取得
+5. 結果をページネーション付きで表示
 
-### タスク管理フロー
-1. リポジトリからタスク作成
-2. Supabaseでタスクデータ管理
-3. リアルタイム更新機能
+### リポジトリ詳細フロー
+1. リポジトリカードクリック
+2. 動的ルーティングで詳細ページ遷移
+3. リポジトリ詳細情報・README・言語統計を並行取得
+4. 詳細画面に統合表示
+
+### API認証フロー
+1. 環境変数からGitHub Personal Access Token取得
+2. API リクエストのAuthorizationヘッダーに設定
+3. レート制限緩和とプライベートリポジトリアクセス
 
 ## 状態管理（Zustand Store）
 
-### authStore
-- ユーザー認証状態
-- ユーザー情報
-- ログイン・ログアウト処理
-
 ### searchStore
-- 検索クエリとフィルター
-- 検索結果
+- 検索クエリと結果
+- ページネーション状態
 - 検索履歴
+- フィルター設定
 
-### taskStore
-- タスク一覧
-- フィルター状態
-- CRUD操作
-
-### uiStore
-- モーダル表示状態
-- ローディング状態
+### uiStore  
 - 通知メッセージ
-
-## データベース設計（Supabase）
-
-### テーブル構成
-
-#### users
-- id (UUID, PK)
-- github_id (Integer, Unique)
-- username (Text)
-- avatar_url (Text)
-- email (Text)
-- created_at (Timestamp)
-- updated_at (Timestamp)
-
-#### repositories
-- id (UUID, PK)
-- github_id (Integer, Unique)
-- name (Text)
-- full_name (Text)
-- description (Text)
-- url (Text)
-- stars (Integer)
-- language (Text)
-- created_at (Timestamp)
-
-#### tasks
-- id (UUID, PK)
-- user_id (UUID, FK → users.id)
-- repository_id (UUID, FK → repositories.id)
-- title (Text)
-- description (Text)
-- status (Enum: pending, in_progress, completed)
-- priority (Enum: low, medium, high)
-- due_date (Date)
-- created_at (Timestamp)
-- updated_at (Timestamp)
-
-#### user_repositories（お気に入り）
-- id (UUID, PK)
-- user_id (UUID, FK → users.id)
-- repository_id (UUID, FK → repositories.id)
-- created_at (Timestamp)
+- ローディング状態
+- 検索フォーム展開状態
+- ソート・順序設定
 
 ## API設計
 
 ### GitHub API統合
-- 検索エンドポイントの活用
-- レート制限の管理
-- エラーハンドリング
+- Search Repositories エンドポイントの活用
+- Personal Access Token による認証
+- レート制限の管理とエラーハンドリング
+- 再試行機能付きリクエスト
 
 ### 内部API設計
-- RESTful API設計
+- Next.js API Routes による実装
+- RESTful API設計原則
 - 適切なHTTPステータスコード
-- エラーレスポンスの統一
+- 統一されたエラーレスポンス形式
 
 ## セキュリティ考慮事項
 
-### 認証・認可
-- JWT トークンの適切な管理
-- API アクセス制御
-- CSRF対策
+### API セキュリティ
+- 環境変数による安全なトークン管理
+- CORS設定とセキュリティヘッダー
+- 入力値の検証とサニタイズ
 
-### データ保護
-- 個人情報の適切な管理
-- SQLインジェクション対策
-- XSS対策
+### フロントエンド セキュリティ
+- XSS対策（適切なエスケープ処理）
+- 安全なMarkdownレンダリング
+- セキュアな外部リンク処理
 
 ## パフォーマンス最適化
 
 ### フロントエンド
-- コンポーネントの最適化
-- レイジーローディング
-- 画像最適化
+- React 19の最新機能活用
+- コンポーネントの適切なメモ化
+- 効率的なページネーション実装
+- リアルタイム検索結果数表示
 
-### バックエンド
-- データベースクエリ最適化
-- キャッシュ戦略
-- API レスポンスの最適化
+### API・データ取得
+- SWRによる効率的なキャッシュ戦略
+- 並行データ取得による高速化
+- GitHub APIレート制限の最適利用
