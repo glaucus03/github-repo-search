@@ -21,6 +21,11 @@ const customJestConfig = {
     '^@/store/(.*)$': '<rootDir>/src/store/$1',
   },
   
+  // ESMパッケージの変換
+  transformIgnorePatterns: [
+    'node_modules/(?!(rehype-raw|remark-gfm|remark-breaks|@uiw/react-markdown-preview)/)',
+  ],
+  
   // テスト対象ファイル
   testMatch: [
     '<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}',

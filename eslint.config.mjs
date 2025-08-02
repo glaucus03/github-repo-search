@@ -43,14 +43,25 @@ const eslintConfig = [
   },
   {
     files: ['**/__tests__/**/*', '**/*.{test,spec}.*'],
-    env: {
-      jest: true,
+    languageOptions: {
+      globals: {
+        jest: true,
+        expect: true,
+        test: true,
+        describe: true,
+        beforeEach: true,
+        afterEach: true,
+        beforeAll: true,
+        afterAll: true,
+      },
     },
   },
   {
     files: ['e2e/**/*'],
-    env: {
-      browser: true,
+    languageOptions: {
+      globals: {
+        browser: true,
+      },
     },
   },
 ];
