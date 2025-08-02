@@ -1,0 +1,43 @@
+name: PR Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  pr-validation:
+    name: PR検証
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Quick checks
+        run: |
+          # 基本的な品質チェックのみ
+          npm run lint
+          npx prettier --check .
+          npx tsc --noEmit
+
+      - name: Fast tests
+        run: npm test -- --watchAll=false --passWithNoTests
+        env:
+          CI: true
+
+      - name: PR title check
+        uses: deepakputhraya/action-pr-title@master
+        with:
+          regex: '^(feat|fix|docs|style|refactor|test|chore)(\(.+\))?: .+'
+          allowed_prefixes: 'feat,fix,docs,style,refactor,test,chore'
+          prefix_case_sensitive: false
+        continue-on-error: true
