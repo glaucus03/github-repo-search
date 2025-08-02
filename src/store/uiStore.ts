@@ -56,6 +56,8 @@ interface UIStore extends UIState {
   addNotification: (notification: Omit<UIStore['notifications'][0], 'id'>) => void
   removeNotification: (id: string) => void
   clearNotifications: () => void
+  clearAllNotifications: () => void
+  resetToInitialState: () => void
   
   // お気に入り関連
   favorites: GitHubRepository[]
@@ -232,6 +234,25 @@ export const useUIStore = create<UIStore>()(
 
         clearNotifications: () =>
           set({ notifications: [] }, false, 'ui/clearNotifications'),
+
+        // 完全リセット機能（ナビゲーション用）
+        clearAllNotifications: () =>
+          set({ notifications: [] }, false, 'ui/clearAllNotifications'),
+
+        resetToInitialState: () =>
+          set(
+            {
+              ...initialState,
+              showRepositoryModal: false,
+              selectedRepositoryId: null,
+              sidebarOpen: false,
+              viewMode: 'grid',
+              autoLoadMore: true,
+              notifications: [],
+            },
+            false,
+            'ui/resetToInitialState'
+          ),
 
         // お気に入り関連
         loadFavorites: () =>

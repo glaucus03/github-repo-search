@@ -15,7 +15,7 @@ export interface SearchState {
 export interface UIState {
   theme: 'light' | 'dark' | 'system'
   isSearchFormExpanded: boolean
-  selectedSortOption: 'stars' | 'forks' | 'updated' | 'best-match'
+  selectedSortOption: 'stars' | 'forks' | 'updated' | 'best-match' | 'help-wanted-issues'
   selectedOrderOption: 'desc' | 'asc'
 }
 

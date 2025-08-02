@@ -94,13 +94,21 @@
 
 /* バッジを含む段落の中央寄せ */
 .markdownWrapper :global(p) {
-  text-align: center;
   margin: 16px 0;
 }
 
-/* テキストを含む段落は左寄せ */
-.markdownWrapper :global(p:has(a)),
-.markdownWrapper :global(p:not(:has(img))) {
+/* center属性を持つ段落は中央寄せ */
+.markdownWrapper :global(p[align="center"]) {
+  text-align: center !important;
+}
+
+/* 画像のみを含む段落は中央寄せ */
+.markdownWrapper :global(p:has(img):not(:has(a))) {
+  text-align: center;
+}
+
+/* テキストやリンクを含む段落は左寄せ */
+.markdownWrapper :global(p:not([align="center"])) {
   text-align: left;
 }
 

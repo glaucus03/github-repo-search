@@ -5,13 +5,26 @@ import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import { Navbar, NavbarBrand, Button } from '@heroui/react'
 import { useRouter } from 'next/navigation'
 
+import { useSearchStore } from '@/store/searchStore'
+import { useUIStore } from '@/store/uiStore'
+
 export function Navigation() {
   const router = useRouter()
+  const { resetSearch } = useSearchStore()
+  const { resetToInitialState } = useUIStore()
   
-  // ホームに戻る際に初期状態にリセット
+  // ホームに戻る際に完全に初期状態にリセット
   const handleHomeClick = () => {
-    // カスタムイベントを発行してページをリセット
+    // 検索ストアを完全リセット
+    resetSearch()
+    
+    // UI状態を完全リセット
+    resetToInitialState()
+    
+    // カスタムイベントを発行してページレベルでもリセット
     window.dispatchEvent(new CustomEvent('resetToInitialState'))
+    
+    // ホームページに遷移
     router.push('/')
   }
 
@@ -21,16 +34,16 @@ export function Navigation() {
       maxWidth="full"
       height="4rem"
     >
-      {/* ブランド - 虫眼鏡アイコン */}
+      {/* ブランド - アイコンのみ */}
       <NavbarBrand>
         <Button
           variant="light"
           isIconOnly
-          className="text-gray-300"
+          className="text-gray-300 hover:text-white transition-colors"
           onClick={handleHomeClick}
           aria-label="ホームに戻る（初期状態にリセット）"
         >
-          <MagnifyingGlassIcon className="w-5 h-5" />
+          <MagnifyingGlassIcon className="w-6 h-6" />
         </Button>
       </NavbarBrand>
     </Navbar>

@@ -2,13 +2,13 @@
 
 // GitHub Repository Search ホームページ
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, Suspense } from 'react'
 import { SearchForm, SearchResults } from '@/components'
 import { useRepositorySearch } from '@/hooks/useRepositorySearch'
 import { useSearchStore } from '@/store/searchStore'
 import { useUIStore } from '@/store/uiStore'
 
-export default function HomePage() {
+function HomePageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const initialQuery = searchParams.get('q') || ''
@@ -122,5 +122,24 @@ export default function HomePage() {
         searchResultsRef={{ current: null }}
       />
     </div>
+  )
+}
+
+export default function HomePage() {
+  return (
+    <Suspense fallback={
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center mb-12">
+          <h1 className="text-5xl font-bold mb-6 text-white">
+            GitHub Repository Search
+          </h1>
+        </div>
+        <div className="flex justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+        </div>
+      </div>
+    }>
+      <HomePageContent />
+    </Suspense>
   )
 }

@@ -37,7 +37,7 @@ export function buildGitHubSearchQuery(params: {
   language?: string | null
   minStars?: number | null
   maxStars?: number | null
-  sort?: 'stars' | 'forks' | 'updated' | 'best-match'
+  sort?: 'stars' | 'forks' | 'updated' | 'best-match' | 'help-wanted-issues'
   order?: 'asc' | 'desc'
 }): string {
   let searchQuery = params.query.trim()

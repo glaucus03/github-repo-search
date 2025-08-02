@@ -246,8 +246,8 @@ export const buildSearchQuery = (store: SearchStore): GitHubSearchQuery => {
   
   return {
     q: query,
-    sort: searchOptions.sort,
-    order: searchOptions.order,
+    sort: searchOptions.sort === 'best-match' ? undefined : searchOptions.sort,
+    order: searchOptions.sort === 'best-match' ? undefined : searchOptions.order,
     per_page: 30, // デフォルトのページサイズ
     page,
   }

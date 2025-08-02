@@ -59,8 +59,8 @@ export function useRepositorySearch(options: UseRepositorySearchOptions = {}) {
     
     const urlParams = new URLSearchParams({
       q: searchQuery.q,
-      ...(searchQuery.sort && searchQuery.sort !== 'best-match' && { sort: searchQuery.sort }),
-      ...(searchQuery.order && searchQuery.sort !== 'best-match' && { order: searchQuery.order }),
+      ...(searchQuery.sort && { sort: searchQuery.sort }),
+      ...(searchQuery.order && searchQuery.sort && { order: searchQuery.order }),
       per_page: (searchQuery.per_page || 30).toString(),
       page: (searchQuery.page || 1).toString(),
     })
