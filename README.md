@@ -4,7 +4,9 @@ GitHubリポジトリを効率的に検索・探索できるモダンなWebア�
 
 ## デモ
 
-https://github.com/glaucus03/task-github-search/docs/assets/demo.mp4
+![アプリケーションのデモ](docs/assets/demo.gif)
+
+*動画版: [docs/assets/demo.mp4](docs/assets/demo.mp4)*
 
 ## 機能
 
