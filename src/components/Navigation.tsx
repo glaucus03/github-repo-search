@@ -31,14 +31,11 @@ export function Navigation() {
   return (
     <Navbar 
       className="border-b border-gray-700 bg-gray-900"
-      maxWidth="full"
-      height="4rem"
     >
       {/* ブランド - アイコンのみ */}
       <NavbarBrand>
         <Button
           variant="light"
-          isIconOnly
           className="text-gray-300 hover:text-white transition-colors"
           onClick={handleHomeClick}
           aria-label="ホームに戻る（初期状態にリセット）"

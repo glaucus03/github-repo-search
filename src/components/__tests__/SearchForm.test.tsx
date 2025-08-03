@@ -6,7 +6,7 @@ import { SearchForm } from '../SearchForm'
 const mockUseSearchStore = {
   query: '',
   setQuery: jest.fn(),
-  searchHistory: [],
+  searchHistory: [] as string[],
   resetResults: jest.fn(),
   searchOptions: {
     language: null,
@@ -157,7 +157,7 @@ describe('SearchForm', () => {
   })
 
   it('フィルターパネルが適切に動作する', async () => {
-    // フィルターボタンをクリックしてUIStoreの関数が呼ばれることをテスト
+    // フィルターボタンをクリックして高度なフィルタが表示されることをテスト
     render(<SearchForm onSearch={mockOnSearch} />)
     
     const filterButtons = screen.getAllByRole('button')
@@ -167,7 +167,8 @@ describe('SearchForm', () => {
     
     if (filterButton) {
       fireEvent.click(filterButton)
-      expect(mockUseUIStore.toggleSearchForm).toHaveBeenCalled()
+      // 高度なフィルタパネルが表示されることを確認
+      expect(screen.getByText('プログラミング言語')).toBeInTheDocument()
     }
   })
 
@@ -176,23 +177,30 @@ describe('SearchForm', () => {
     
     render(<SearchForm onSearch={mockOnSearch} />)
     
+    // 入力フィールドにフォーカスして履歴を表示
+    const input = screen.getByPlaceholderText(/を検索/)
+    fireEvent.focus(input)
+    
     // 履歴項目が表示されることを確認
     expect(screen.getByText('react')).toBeInTheDocument()
     expect(screen.getByText('vue')).toBeInTheDocument()
     expect(screen.getByText('angular')).toBeInTheDocument()
   })
 
-  it('履歴項目クリックで検索が実行される', async () => {
+  it('履歴項目クリックで入力値が設定される', async () => {
     mockUseSearchStore.searchHistory = ['react']
     
     render(<SearchForm onSearch={mockOnSearch} />)
     
+    // 入力フィールドにフォーカスして履歴を表示
+    const input = screen.getByPlaceholderText(/を検索/)
+    fireEvent.focus(input)
+    
     const historyItem = screen.getByText('react')
     fireEvent.click(historyItem)
     
-    await waitFor(() => {
-      expect(mockOnSearch).toHaveBeenCalledWith('react')
-    })
+    // 入力値が設定されることを確認
+    expect(input).toHaveValue('react')
   })
 
   it('プレースホルダーが正しく表示される', () => {

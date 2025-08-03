@@ -193,7 +193,7 @@ export function SearchForm({ onSearch, className }: SearchFormProps) {
       'rust performance'
     ]
     const randomPlaceholder = placeholders[Math.floor(Math.random() * placeholders.length)]
-    setPlaceholder(`${randomPlaceholder}を検索...`)
+    setPlaceholder(`${randomPlaceholder}を検索`)
   }, [])
 
   return (

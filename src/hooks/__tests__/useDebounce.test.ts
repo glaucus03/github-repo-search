@@ -168,9 +168,9 @@ describe('useDebounce', () => {
 
   it('nullやundefinedも正しく処理する', () => {
     const { result, rerender } = renderHook(
-      ({ value, delay }) => useDebounce(value, delay),
+      ({ value, delay }) => useDebounce<string | null | undefined>(value, delay),
       {
-        initialProps: { value: 'initial', delay: 500 }
+        initialProps: { value: 'initial' as string | null | undefined, delay: 500 }
       }
     )
 
