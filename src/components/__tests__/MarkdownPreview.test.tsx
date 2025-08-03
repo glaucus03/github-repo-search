@@ -1,6 +1,9 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 
+// Mock rehype-raw
+jest.mock('rehype-raw')
+
 // Mock @uiw/react-markdown-preview before importing MarkdownPreview
 jest.mock('@uiw/react-markdown-preview', () => {
   return function MockMarkdownPreview({ source }: { source: string }) {

@@ -112,7 +112,7 @@ describe('SearchForm', () => {
     const input = screen.getByRole('textbox')
     
     fireEvent.change(input, { target: { value: 'react' } })
-    fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' })
+    fireEvent.keyPress(input, { key: 'Enter', code: 'Enter', charCode: 13 })
     
     await waitFor(() => {
       expect(mockOnSearch).toHaveBeenCalledWith('react')
@@ -140,11 +140,19 @@ describe('SearchForm', () => {
   it('フィルタボタンで詳細フィルタが表示/非表示される', () => {
     render(<SearchForm onSearch={mockOnSearch} />)
     
-    const filterButton = screen.getByRole('button', { name: /フィルタ/ })
+    // フィルタボタンはSVGアイコンのみなので、別の方法で取得
+    const filterButtons = screen.getAllByRole('button')
+    const filterButton = filterButtons.find(button => {
+      // SVGアイコンを含むボタンを探す
+      return button.querySelector('svg') && button.className.includes('rounded-full h-14 w-14')
+    })
     
-    fireEvent.click(filterButton)
-    
-    // フィルタUIが表示されることを確認（実装に応じて調整）
     expect(filterButton).toBeInTheDocument()
+    
+    if (filterButton) {
+      fireEvent.click(filterButton)
+      // フィルタパネルの表示を確認（実装に応じて）
+      expect(filterButton).toBeInTheDocument()
+    }
   })
 })

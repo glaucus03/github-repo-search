@@ -55,7 +55,6 @@ export function useRepositorySearch(options: UseRepositorySearchOptions = {}) {
     
     const state = useSearchStore.getState()
     const searchQuery = buildSearchQuery(state)
-    console.log('SWR search query:', searchQuery)
     
     const urlParams = new URLSearchParams({
       q: searchQuery.q,
@@ -66,7 +65,6 @@ export function useRepositorySearch(options: UseRepositorySearchOptions = {}) {
     })
     
     const apiUrl = `/api/repositories/search?${urlParams.toString()}`
-    console.log('API URL:', apiUrl)
     
     return [apiUrl]
   }, [query, page, enabled])
@@ -145,6 +143,10 @@ export function useRepositorySearch(options: UseRepositorySearchOptions = {}) {
         return
       }
 
+      // setQueryを呼び出して検索クエリを更新
+      const { setQuery } = useSearchStore.getState()
+      setQuery(searchQuery)
+
       if (resetPage) {
         resetResults()
       }
@@ -198,6 +200,12 @@ export function useRepositorySearch(options: UseRepositorySearchOptions = {}) {
       try {
         setLoading(true)
         const query = createPopularRepositoryQuery(language)
+        
+        // setQueryを呼び出して検索クエリを更新
+        const { setQuery } = useSearchStore.getState()
+        setQuery(query)
+        resetResults()
+        
         const url = `/api/repositories/search?${new URLSearchParams({
           q: query,
           sort: 'stars',
@@ -222,7 +230,7 @@ export function useRepositorySearch(options: UseRepositorySearchOptions = {}) {
         setLoading(false)
       }
     },
-    [setLoading, setResults, setTotalCount, setHasMore, setError]
+    [setLoading, setResults, setTotalCount, setHasMore, setError, resetResults]
   )
 
   // 最近更新されたリポジトリを取得（ドメインロジック使用）
@@ -231,6 +239,12 @@ export function useRepositorySearch(options: UseRepositorySearchOptions = {}) {
       try {
         setLoading(true)
         const query = createRecentRepositoryQuery(language)
+        
+        // setQueryを呼び出して検索クエリを更新
+        const { setQuery } = useSearchStore.getState()
+        setQuery(query)
+        resetResults()
+        
         const url = `/api/repositories/search?${new URLSearchParams({
           q: query,
           sort: 'updated',
@@ -255,7 +269,7 @@ export function useRepositorySearch(options: UseRepositorySearchOptions = {}) {
         setLoading(false)
       }
     },
-    [setLoading, setResults, setTotalCount, setHasMore, setError]
+    [setLoading, setResults, setTotalCount, setHasMore, setError, resetResults]
   )
 
   // 検索状態のリセット

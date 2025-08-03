@@ -102,9 +102,7 @@ export function SearchForm({ onSearch, className }: SearchFormProps) {
       order: selectedOrderOption
     }
     
-    console.log('Building query with params:', params)
     const result = buildGitHubSearchQuery(params)
-    console.log('Built query:', result)
     
     return result
   }
@@ -151,7 +149,6 @@ export function SearchForm({ onSearch, className }: SearchFormProps) {
       
       // クエリが実際に変更された場合のみ実行
       if (advancedQuery !== query) {
-        console.log('Filter changed, updating query from:', query, 'to:', advancedQuery)
         setQuery(advancedQuery)
         resetResults()
         onSearch?.(advancedQuery)

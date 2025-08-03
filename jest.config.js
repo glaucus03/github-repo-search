@@ -23,8 +23,16 @@ const customJestConfig = {
   
   // ESMパッケージの変換
   transformIgnorePatterns: [
-    'node_modules/(?!(rehype-raw|remark-gfm|remark-breaks|@uiw/react-markdown-preview)/)',
+    '/node_modules/(?!(rehype-raw|hast-util-raw|remark-gfm|remark-breaks|@uiw/react-markdown-preview|unified|bail|is-plain-obj|trough|vfile|unist-util-stringify-position|mdast-util-from-markdown|mdast-util-to-string|micromark|decode-named-character-reference|character-entities)/)',
   ],
+  
+  // ESM対応
+  extensionsToTreatAsEsm: ['.ts', '.tsx'],
+  globals: {
+    'ts-jest': {
+      useESM: true,
+    },
+  },
   
   // テスト対象ファイル
   testMatch: [
