@@ -33,7 +33,7 @@ test.describe('検索機能テスト', () => {
     
     // 複数の結果が表示されることを確認
     const repositoryCards = page.locator('[data-testid="repository-card"]')
-    await expect(repositoryCards).toHaveCount.greaterThan(0)
+    await expect(repositoryCards.count()).resolves.toBeGreaterThan(0)
   })
 
   test('Enterキーで検索が実行される', async ({ page }) => {

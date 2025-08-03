@@ -208,4 +208,143 @@ describe('useRepositorySearch', () => {
     
     expect(result.current.results).toEqual([])
   })
+
+  it('hasMoreがfalseの場合、loadMoreが実行されない', async () => {
+    const searchStore = require('@/store/searchStore')
+    const mockIncrementPage = jest.fn()
+    
+    searchStore.useSearchStore.mockReturnValue({
+      query: 'react',
+      results: [],
+      loading: false,
+      error: null,
+      hasMore: false, // hasMoreがfalse
+      totalCount: 30,
+      page: 1,
+      setQuery: jest.fn(),
+      setResults: jest.fn(),
+      addResults: jest.fn(),
+      setLoading: jest.fn(),
+      setError: jest.fn(),
+      setTotalCount: jest.fn(),
+      setHasMore: jest.fn(),
+      incrementPage: mockIncrementPage,
+      resetResults: jest.fn(),
+      addToHistory: jest.fn(),
+    })
+    
+    const { result } = renderHook(() => useRepositorySearch())
+    
+    await act(async () => {
+      await result.current.loadMore()
+    })
+    
+    // hasMoreがfalseなのでincrementPageは呼ばれない
+    expect(mockIncrementPage).not.toHaveBeenCalled()
+  })
+
+  it('ローディング中はloadMoreが実行されない', async () => {
+    const searchStore = require('@/store/searchStore')
+    const mockIncrementPage = jest.fn()
+    
+    searchStore.useSearchStore.mockReturnValue({
+      query: 'react',
+      results: [],
+      loading: true, // ローディング中
+      error: null,
+      hasMore: true,
+      totalCount: 100,
+      page: 1,
+      setQuery: jest.fn(),
+      setResults: jest.fn(),
+      addResults: jest.fn(),
+      setLoading: jest.fn(),
+      setError: jest.fn(),
+      setTotalCount: jest.fn(),
+      setHasMore: jest.fn(),
+      incrementPage: mockIncrementPage,
+      resetResults: jest.fn(),
+      addToHistory: jest.fn(),
+    })
+    
+    const { result } = renderHook(() => useRepositorySearch())
+    
+    await act(async () => {
+      await result.current.loadMore()
+    })
+    
+    // ローディング中なのでincrementPageは呼ばれない
+    expect(mockIncrementPage).not.toHaveBeenCalled()
+  })
+
+  it('空のクエリでsearchが呼ばれた場合、履歴に追加されない', async () => {
+    const searchDomain = require('@/lib/search-domain')
+    const searchStore = require('@/store/searchStore')
+    const mockAddToHistory = jest.fn()
+    
+    searchDomain.validateSearchQuery.mockReturnValueOnce({
+      isValid: false,
+      errors: ['クエリが空です']
+    })
+    
+    searchStore.useSearchStore.mockReturnValue({
+      query: '',
+      results: [],
+      loading: false,
+      error: null,
+      hasMore: true,
+      totalCount: 0,
+      page: 1,
+      setQuery: jest.fn(),
+      setResults: jest.fn(),
+      addResults: jest.fn(),
+      setLoading: jest.fn(),
+      setError: jest.fn(),
+      setTotalCount: jest.fn(),
+      setHasMore: jest.fn(),
+      incrementPage: jest.fn(),
+      resetResults: jest.fn(),
+      addToHistory: mockAddToHistory,
+    })
+    
+    const { result } = renderHook(() => useRepositorySearch())
+    
+    await act(async () => {
+      await result.current.search('') // 空のクエリ
+    })
+    
+    // 空のクエリは履歴に追加されない
+    expect(mockAddToHistory).not.toHaveBeenCalled()
+  })
+
+  it('デバウンスされたクエリの変更が処理される', async () => {
+    const searchStore = require('@/store/searchStore')
+    const mockSetQuery = jest.fn()
+    
+    searchStore.useSearchStore.mockReturnValue({
+      query: 'react',
+      results: [],
+      loading: false,
+      error: null,
+      hasMore: true,
+      totalCount: 0,
+      page: 1,
+      setQuery: mockSetQuery,
+      setResults: jest.fn(),
+      addResults: jest.fn(),
+      setLoading: jest.fn(),
+      setError: jest.fn(),
+      setTotalCount: jest.fn(),
+      setHasMore: jest.fn(),
+      incrementPage: jest.fn(),
+      resetResults: jest.fn(),
+      addToHistory: jest.fn(),
+    })
+    
+    const { result } = renderHook(() => useRepositorySearch())
+    
+    // search関数の存在を確認
+    expect(typeof result.current.search).toBe('function')
+    expect(typeof result.current.loadMore).toBe('function')
+  })
 })

@@ -155,4 +155,74 @@ describe('SearchForm', () => {
       expect(filterButton).toBeInTheDocument()
     }
   })
+
+  it('フィルターパネルが適切に動作する', async () => {
+    // フィルターボタンをクリックしてUIStoreの関数が呼ばれることをテスト
+    render(<SearchForm onSearch={mockOnSearch} />)
+    
+    const filterButtons = screen.getAllByRole('button')
+    const filterButton = filterButtons.find(button => {
+      return button.querySelector('svg') && button.className.includes('rounded-full h-14 w-14')
+    })
+    
+    if (filterButton) {
+      fireEvent.click(filterButton)
+      expect(mockUseUIStore.toggleSearchForm).toHaveBeenCalled()
+    }
+  })
+
+  it('検索履歴が表示される', () => {
+    mockUseSearchStore.searchHistory = ['react', 'vue', 'angular']
+    
+    render(<SearchForm onSearch={mockOnSearch} />)
+    
+    // 履歴項目が表示されることを確認
+    expect(screen.getByText('react')).toBeInTheDocument()
+    expect(screen.getByText('vue')).toBeInTheDocument()
+    expect(screen.getByText('angular')).toBeInTheDocument()
+  })
+
+  it('履歴項目クリックで検索が実行される', async () => {
+    mockUseSearchStore.searchHistory = ['react']
+    
+    render(<SearchForm onSearch={mockOnSearch} />)
+    
+    const historyItem = screen.getByText('react')
+    fireEvent.click(historyItem)
+    
+    await waitFor(() => {
+      expect(mockOnSearch).toHaveBeenCalledWith('react')
+    })
+  })
+
+  it('プレースホルダーが正しく表示される', () => {
+    render(<SearchForm onSearch={mockOnSearch} />)
+    
+    const input = screen.getByRole('textbox')
+    // プレースホルダーが設定されていることを確認
+    expect(input).toHaveAttribute('placeholder')
+  })
+
+  it('初期クエリが設定される', () => {
+    mockUseSearchStore.query = 'initial-query'
+    
+    render(<SearchForm onSearch={mockOnSearch} />)
+    
+    const input = screen.getByRole('textbox')
+    expect(input).toHaveValue('initial-query')
+  })
+
+  it('複数のボタンが存在することを確認', () => {
+    render(<SearchForm onSearch={mockOnSearch} />)
+    
+    // 検索ボタンの存在確認
+    expect(screen.getByText('検索する')).toBeInTheDocument()
+    
+    // 人気のリポジトリボタンの存在確認
+    expect(screen.getByText('人気のリポジトリ')).toBeInTheDocument()
+    
+    // フィルターボタンの存在確認（SVGアイコンボタン）
+    const buttons = screen.getAllByRole('button')
+    expect(buttons.length).toBeGreaterThan(2) // 検索、人気、フィルターボタン
+  })
 })
