@@ -1,49 +1,55 @@
-'use client'
+"use client";
 
-import { Card, CardBody, Spinner } from '@heroui/react'
-import { MagnifyingGlassIcon, StarIcon, EyeIcon } from '@heroicons/react/24/outline'
-import { Pagination } from '@/components'
-import { useLiveSearch } from '@/hooks'
+import {
+  MagnifyingGlassIcon,
+  StarIcon,
+  EyeIcon,
+} from "@heroicons/react/24/outline";
+import { Card, CardBody, Spinner } from "@heroui/react";
+import Image from "next/image";
+
+import { Pagination } from "@/components";
+import { useLiveSearch } from "@/hooks";
 
 interface Repository {
-  id: number
-  name: string
-  full_name: string
-  description: string | null
-  html_url: string
-  stargazers_count: number
-  watchers_count: number
-  language: string | null
+  id: number;
+  name: string;
+  full_name: string;
+  description: string | null;
+  html_url: string;
+  stargazers_count: number;
+  watchers_count: number;
+  language: string | null;
   owner: {
-    login: string
-    avatar_url: string
-  }
+    login: string;
+    avatar_url: string;
+  };
 }
 
 interface SearchResultsProps {
   // Search state
-  searchQuery: string
-  currentQuery: string
-  repositories: Repository[]
-  loading: boolean
-  error: string | null
-  
+  searchQuery: string;
+  currentQuery: string;
+  repositories: Repository[];
+  loading: boolean;
+  error: string | null;
+
   // Pagination
-  currentPage: number
-  totalPages: number
-  totalCount: number
-  
+  currentPage: number;
+  totalPages: number;
+  totalCount: number;
+
   // Handlers
-  onRepositoryClick: (repository: Repository, event: React.MouseEvent) => void
-  onPageChange: (page: number) => void
-  
+  onRepositoryClick: (repository: Repository, event: React.MouseEvent) => void;
+  onPageChange: (page: number) => void;
+
   // Refs
-  searchResultsRef: React.RefObject<HTMLDivElement | null>
+  searchResultsRef: React.RefObject<HTMLDivElement | null>;
 }
 
 export function SearchResults({
   searchQuery,
-  currentQuery,
+  currentQuery: _currentQuery,
   repositories,
   loading,
   error,
@@ -52,13 +58,13 @@ export function SearchResults({
   totalCount,
   onRepositoryClick,
   onPageChange,
-  searchResultsRef
+  searchResultsRef,
 }: SearchResultsProps) {
   const {
     totalCount: liveCount,
     loading: liveLoading,
     error: liveError,
-  } = useLiveSearch(searchQuery)
+  } = useLiveSearch(searchQuery);
 
   // Loading state
   if (loading && repositories.length === 0) {
@@ -69,7 +75,7 @@ export function SearchResults({
           <p className="mt-4 text-gray-300">検索中...</p>
         </div>
       </div>
-    )
+    );
   }
 
   // Error state
@@ -83,22 +89,34 @@ export function SearchResults({
           </CardBody>
         </Card>
       </div>
-    )
+    );
   }
 
   // Show spinner while live search is loading
-  if (!loading && !error && repositories.length === 0 && searchQuery && liveLoading) {
+  if (
+    !loading &&
+    !error &&
+    repositories.length === 0 &&
+    searchQuery &&
+    liveLoading
+  ) {
     return (
       <div className="max-w-6xl mx-auto">
         <div className="text-center py-20">
           <Spinner size="lg" />
         </div>
       </div>
-    )
+    );
   }
 
   // No results but search query exists (not loading)
-  if (!loading && !error && repositories.length === 0 && searchQuery && !liveLoading) {
+  if (
+    !loading &&
+    !error &&
+    repositories.length === 0 &&
+    searchQuery &&
+    !liveLoading
+  ) {
     return (
       <div className="max-w-6xl mx-auto">
         <Card className="border-gray-600">
@@ -109,9 +127,7 @@ export function SearchResults({
                 <h3 className="text-lg font-semibold mb-2 text-white">
                   検索エラー
                 </h3>
-                <p className="text-gray-300">
-                  {liveError}
-                </p>
+                <p className="text-gray-300">{liveError}</p>
               </>
             ) : liveCount > 0 ? (
               <>
@@ -137,7 +153,7 @@ export function SearchResults({
           </CardBody>
         </Card>
       </div>
-    )
+    );
   }
 
   // No search query
@@ -156,7 +172,7 @@ export function SearchResults({
           </CardBody>
         </Card>
       </div>
-    )
+    );
   }
 
   // Results display
@@ -171,12 +187,15 @@ export function SearchResults({
           >
             <div className="flex items-start gap-4">
               {/* アバター */}
-              <img
+              <Image
                 src={repo.owner.avatar_url}
                 alt={repo.owner.login}
+                width={48}
+                height={48}
                 className="w-12 h-12 rounded-full flex-shrink-0"
+                unoptimized
               />
-              
+
               {/* メインコンテンツ */}
               <div className="flex-1 min-w-0">
                 {/* タイトル行 */}
@@ -185,11 +204,9 @@ export function SearchResults({
                     <h3 className="font-semibold text-xl text-blue-400 truncate">
                       {repo.name}
                     </h3>
-                    <p className="text-sm text-gray-400">
-                      {repo.owner.login}
-                    </p>
+                    <p className="text-sm text-gray-400">{repo.owner.login}</p>
                   </div>
-                  
+
                   {/* 統計情報 */}
                   <div className="flex items-center gap-6 text-sm text-gray-400 flex-shrink-0">
                     {repo.language && (
@@ -219,7 +236,7 @@ export function SearchResults({
             </div>
           </div>
         ))}
-        
+
         {/* ページネーション */}
         <div className="mt-8">
           <Pagination
@@ -233,5 +250,5 @@ export function SearchResults({
         </div>
       </div>
     </div>
-  )
+  );
 }

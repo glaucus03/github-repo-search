@@ -63,6 +63,7 @@ task-github-search/
 ### コアコンポーネント（src/components/）
 
 #### ナビゲーション・レイアウト
+
 ```
 Navigation.tsx             # ヘッダーナビゲーション
 ErrorBoundary.tsx          # エラー境界
@@ -71,6 +72,7 @@ InitializationProvider.tsx # 初期化プロバイダー
 ```
 
 #### 検索・表示機能
+
 ```
 RepositoryCard.tsx         # リポジトリカード表示
 SearchForm.tsx             # 検索フォーム
@@ -81,6 +83,7 @@ MarkdownPreview/           # Markdownプレビュー
 ```
 
 #### SEO・構造化データ
+
 ```
 SEO.tsx                    # SEO機能統合コンポーネント
                           # - 構造化データ
@@ -91,16 +94,19 @@ SEO.tsx                    # SEO機能統合コンポーネント
 ### ページ構成（src/app/）
 
 #### メインページ
+
 - `/` - 検索ホームページ
 - `/repository/[owner]/[name]` - リポジトリ詳細ページ
 
 #### API Routes
+
 - `/api/repositories/search` - GitHub検索API
 - `/api/repositories/[owner]/[name]` - リポジトリ詳細API
 
 ## データフロー
 
 ### 検索フロー
+
 1. ユーザーが検索クエリを入力
 2. リアルタイム検索結果数取得（useLiveSearch）
 3. デバウンス処理による最適化された検索実行
@@ -109,6 +115,7 @@ SEO.tsx                    # SEO機能統合コンポーネント
 6. ヘッダーアイコンクリックで初期状態にリセット
 
 ### リポジトリ詳細フロー
+
 1. リポジトリカードクリック
 2. 動的ルーティングで詳細ページ遷移
 3. リポジトリ詳細情報・README・言語統計を並行取得
@@ -116,6 +123,7 @@ SEO.tsx                    # SEO機能統合コンポーネント
 5. README画像の自動GitHub rawURL変換
 
 ### API認証フロー
+
 1. 環境変数からGitHub Personal Access Token取得
 2. API リクエストのAuthorizationヘッダーに設定
 3. レート制限緩和とプライベートリポジトリアクセス
@@ -123,12 +131,14 @@ SEO.tsx                    # SEO機能統合コンポーネント
 ## 状態管理（Zustand Store）
 
 ### searchStore
+
 - 検索クエリと結果
 - ページネーション状態
 - 検索履歴
 - フィルター設定
 
-### uiStore  
+### uiStore
+
 - 通知メッセージ
 - ローディング状態
 - 検索フォーム展開状態
@@ -137,12 +147,14 @@ SEO.tsx                    # SEO機能統合コンポーネント
 ## API設計
 
 ### GitHub API統合
+
 - Search Repositories エンドポイントの活用
 - Personal Access Token による認証
 - レート制限の管理とエラーハンドリング
 - 再試行機能付きリクエスト
 
 ### 内部API設計
+
 - Next.js API Routes による実装
 - RESTful API設計原則
 - 適切なHTTPステータスコード
@@ -151,11 +163,13 @@ SEO.tsx                    # SEO機能統合コンポーネント
 ## セキュリティ考慮事項
 
 ### API セキュリティ
+
 - 環境変数による安全なトークン管理
 - CORS設定とセキュリティヘッダー
 - 入力値の検証とサニタイズ
 
 ### フロントエンド セキュリティ
+
 - XSS対策（適切なエスケープ処理）
 - 安全なMarkdownレンダリング
 - セキュアな外部リンク処理
@@ -163,12 +177,14 @@ SEO.tsx                    # SEO機能統合コンポーネント
 ## パフォーマンス最適化
 
 ### フロントエンド
+
 - React 19の最新機能活用
 - コンポーネントの適切なメモ化
 - 効率的なページネーション実装
 - リアルタイム検索結果数表示
 
 ### API・データ取得
+
 - SWRによる効率的なキャッシュ戦略
 - 並行データ取得による高速化
 - GitHub APIレート制限の最適利用

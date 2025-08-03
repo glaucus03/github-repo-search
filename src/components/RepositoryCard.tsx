@@ -1,103 +1,121 @@
-'use client'
+"use client";
 
 // リポジトリカードコンポーネント
-import { 
-  StarIcon, 
-  EyeIcon, 
+import {
+  StarIcon,
+  EyeIcon,
   CodeBracketIcon,
   CalendarDaysIcon,
   ArrowTopRightOnSquareIcon,
-  HeartIcon
-} from '@heroicons/react/24/outline'
-import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid'
-import { Card, CardBody, CardFooter, Avatar, Chip, Link, Button } from '@heroui/react'
+  HeartIcon,
+} from "@heroicons/react/24/outline";
+import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
+import {
+  Card,
+  CardBody,
+  CardFooter,
+  Avatar,
+  Chip,
+  Link,
+  Button,
+} from "@heroui/react";
 
-import { LANGUAGE_COLORS } from '@/lib/constants'
-import { cn, formatNumber, formatRelativeTime, truncateText } from '@/lib/utils'
-import { useUIStore } from '@/store/uiStore'
-import type { GitHubRepository } from '@/types/github'
+import { LANGUAGE_COLORS } from "@/lib/constants";
+import {
+  cn,
+  formatNumber,
+  formatRelativeTime,
+  truncateText,
+} from "@/lib/utils";
+import { useUIStore } from "@/store/uiStore";
+import type { GitHubRepository } from "@/types/github";
 
 interface RepositoryCardProps {
-  repository: GitHubRepository
-  onSelect?: (repository: GitHubRepository) => void
-  className?: string
-  variant?: 'default' | 'compact'
+  repository: GitHubRepository;
+  onSelect?: (repository: GitHubRepository) => void;
+  className?: string;
+  variant?: "default" | "compact";
 }
 
-export function RepositoryCard({ 
-  repository, 
-  onSelect, 
+export function RepositoryCard({
+  repository,
+  onSelect,
   className,
-  variant = 'default' 
+  variant = "default",
 }: RepositoryCardProps) {
-  const { isFavorite, addToFavorites, removeFromFavorites, addNotification } = useUIStore()
-  const isFav = isFavorite(repository.id)
+  const { isFavorite, addToFavorites, removeFromFavorites, addNotification } =
+    useUIStore();
+  const isFav = isFavorite(repository.id);
 
   const handleClick = () => {
-    onSelect?.(repository)
-  }
+    onSelect?.(repository);
+  };
 
   const handleFavoriteToggle = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    
+    e.stopPropagation();
+
     if (isFav) {
-      removeFromFavorites(repository.id)
+      removeFromFavorites(repository.id);
       addNotification({
-        type: 'success',
-        message: 'お気に入りから削除しました',
-      })
+        type: "success",
+        message: "お気に入りから削除しました",
+      });
     } else {
-      addToFavorites(repository)
+      addToFavorites(repository);
       addNotification({
-        type: 'success',
-        message: 'お気に入りに追加しました',
-      })
+        type: "success",
+        message: "お気に入りに追加しました",
+      });
     }
-  }
+  };
 
-  const languageColor = repository.language 
-    ? LANGUAGE_COLORS[repository.language] || '#6B7280'
-    : '#6B7280'
+  const languageColor = repository.language
+    ? LANGUAGE_COLORS[repository.language] || "#6B7280"
+    : "#6B7280";
 
-  const isCompact = variant === 'compact'
+  const isCompact = variant === "compact";
 
   return (
-    <Card 
+    <Card
       className={cn(
-        'repository-card cursor-pointer transition-all duration-200 hover:scale-[1.02]',
-        isCompact ? 'h-auto' : 'h-full min-h-[200px]',
-        className
+        "repository-card cursor-pointer transition-all duration-200 hover:scale-[1.02]",
+        isCompact ? "h-auto" : "h-full min-h-[200px]",
+        className,
       )}
       isPressable
       onPress={handleClick}
     >
-      <CardBody className={cn('flex flex-col', isCompact ? 'p-4' : 'p-6')}>
+      <CardBody className={cn("flex flex-col", isCompact ? "p-4" : "p-6")}>
         {/* ヘッダー部分 */}
         <div className="flex items-start gap-3 mb-3">
           <Avatar
             src={repository.owner.avatar_url}
             alt={repository.owner.login}
-            size={isCompact ? 'sm' : 'md'}
+            size={isCompact ? "sm" : "md"}
             className="flex-shrink-0"
           />
-          
+
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0 flex-1">
-                <h3 className={cn(
-                  'font-semibold truncate text-foreground',
-                  isCompact ? 'text-sm' : 'text-base'
-                )}>
+                <h3
+                  className={cn(
+                    "font-semibold truncate text-foreground",
+                    isCompact ? "text-sm" : "text-base",
+                  )}
+                >
                   {repository.name}
                 </h3>
-                <p className={cn(
-                  'text-default-500 truncate',
-                  isCompact ? 'text-xs' : 'text-sm'
-                )}>
+                <p
+                  className={cn(
+                    "text-default-500 truncate",
+                    isCompact ? "text-xs" : "text-sm",
+                  )}
+                >
                   {repository.owner.login}
                 </p>
               </div>
-              
+
               <div className="flex items-center gap-2">
                 {/* プライベートリポジトリバッジ */}
                 {repository.private && (
@@ -105,7 +123,7 @@ export function RepositoryCard({
                     Private
                   </Chip>
                 )}
-                
+
                 {/* お気に入りボタン */}
                 <Button
                   isIconOnly
@@ -128,37 +146,46 @@ export function RepositoryCard({
 
         {/* 説明文 */}
         {repository.description && (
-          <p className={cn(
-            'text-default-600 mb-4 flex-1',
-            isCompact ? 'text-xs line-clamp-2' : 'text-sm line-clamp-3'
-          )}>
-            {isCompact 
+          <p
+            className={cn(
+              "text-default-600 mb-4 flex-1",
+              isCompact ? "text-xs line-clamp-2" : "text-sm line-clamp-3",
+            )}
+          >
+            {isCompact
               ? truncateText(repository.description, 80)
-              : truncateText(repository.description, 120)
-            }
+              : truncateText(repository.description, 120)}
           </p>
         )}
 
         {/* 統計情報 */}
-        <div className={cn(
-          'flex items-center gap-4 mb-4',
-          isCompact ? 'text-xs' : 'text-sm'
-        )}>
+        <div
+          className={cn(
+            "flex items-center gap-4 mb-4",
+            isCompact ? "text-xs" : "text-sm",
+          )}
+        >
           {/* スター数 */}
           <div className="flex items-center gap-1 text-default-500">
-            <StarIcon className={cn('flex-shrink-0', isCompact ? 'w-3 h-3' : 'w-4 h-4')} />
+            <StarIcon
+              className={cn("flex-shrink-0", isCompact ? "w-3 h-3" : "w-4 h-4")}
+            />
             <span>{formatNumber(repository.stargazers_count)}</span>
           </div>
 
           {/* フォーク数 */}
           <div className="flex items-center gap-1 text-default-500">
-            <CodeBracketIcon className={cn('flex-shrink-0', isCompact ? 'w-3 h-3' : 'w-4 h-4')} />
+            <CodeBracketIcon
+              className={cn("flex-shrink-0", isCompact ? "w-3 h-3" : "w-4 h-4")}
+            />
             <span>{formatNumber(repository.forks_count)}</span>
           </div>
 
           {/* ウォッチャー数 */}
           <div className="flex items-center gap-1 text-default-500">
-            <EyeIcon className={cn('flex-shrink-0', isCompact ? 'w-3 h-3' : 'w-4 h-4')} />
+            <EyeIcon
+              className={cn("flex-shrink-0", isCompact ? "w-3 h-3" : "w-4 h-4")}
+            />
             <span>{formatNumber(repository.watchers_count)}</span>
           </div>
         </div>
@@ -168,11 +195,19 @@ export function RepositoryCard({
           {/* プログラミング言語 */}
           {repository.language && (
             <div className="flex items-center gap-1">
-              <div 
-                className={cn('rounded-full', isCompact ? 'w-2 h-2' : 'w-3 h-3')}
+              <div
+                className={cn(
+                  "rounded-full",
+                  isCompact ? "w-2 h-2" : "w-3 h-3",
+                )}
                 style={{ backgroundColor: languageColor }}
               />
-              <span className={cn('text-default-600', isCompact ? 'text-xs' : 'text-sm')}>
+              <span
+                className={cn(
+                  "text-default-600",
+                  isCompact ? "text-xs" : "text-sm",
+                )}
+              >
                 {repository.language}
               </span>
             </div>
@@ -185,25 +220,34 @@ export function RepositoryCard({
               size="sm"
               variant="flat"
               color="primary"
-              className={isCompact ? 'text-xs' : ''}
+              className={isCompact ? "text-xs" : ""}
             >
               {topic}
             </Chip>
           ))}
 
           {repository.topics.length > (isCompact ? 2 : 3) && (
-            <span className={cn('text-default-400', isCompact ? 'text-xs' : 'text-sm')}>
+            <span
+              className={cn(
+                "text-default-400",
+                isCompact ? "text-xs" : "text-sm",
+              )}
+            >
               +{repository.topics.length - (isCompact ? 2 : 3)}
             </span>
           )}
         </div>
 
         {/* 更新日時 */}
-        <div className={cn(
-          'flex items-center gap-1 text-default-400 mt-auto',
-          isCompact ? 'text-xs' : 'text-sm'
-        )}>
-          <CalendarDaysIcon className={cn('flex-shrink-0', isCompact ? 'w-3 h-3' : 'w-4 h-4')} />
+        <div
+          className={cn(
+            "flex items-center gap-1 text-default-400 mt-auto",
+            isCompact ? "text-xs" : "text-sm",
+          )}
+        >
+          <CalendarDaysIcon
+            className={cn("flex-shrink-0", isCompact ? "w-3 h-3" : "w-4 h-4")}
+          />
           <span>
             {formatRelativeTime(new Date(repository.updated_at))}に更新
           </span>
@@ -254,5 +298,5 @@ export function RepositoryCard({
         </CardFooter>
       )}
     </Card>
-  )
+  );
 }

@@ -8,7 +8,7 @@ jobs:
   pr-validation:
     name: PR検証
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -16,8 +16,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm install
@@ -38,6 +38,6 @@ jobs:
         uses: deepakputhraya/action-pr-title@master
         with:
           regex: '^(feat|fix|docs|style|refactor|test|chore)(\(.+\))?: .+'
-          allowed_prefixes: 'feat,fix,docs,style,refactor,test,chore'
+          allowed_prefixes: "feat,fix,docs,style,refactor,test,chore"
           prefix_case_sensitive: false
         continue-on-error: true

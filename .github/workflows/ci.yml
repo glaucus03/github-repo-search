@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 env:
-  NODE_VERSION: '20'
+  NODE_VERSION: "20"
 
 jobs:
   lint:
@@ -21,14 +21,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: "npm"
 
       - name: 依存関係インストール
         run: npm ci
 
       - name: ESLint実行
         run: npm run lint
-        continue-on-error: true  # 一時的にエラーを許可
+        continue-on-error: true # 一時的にエラーを許可
 
   test:
     name: Test
@@ -41,14 +41,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: "npm"
 
       - name: 依存関係インストール
         run: npm ci
 
       - name: テスト実行
         run: npm test
-        continue-on-error: true  # 一時的にエラーを許可
+        continue-on-error: true # 一時的にエラーを許可
 
       - name: カバレッジレポート生成
         run: npm run test:coverage
@@ -72,7 +72,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: "npm"
 
       - name: 依存関係インストール
         run: npm ci
@@ -104,7 +104,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: "npm"
 
       - name: 依存関係インストール
         run: npm ci
@@ -135,7 +135,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: "npm"
 
       - name: 依存関係インストール
         run: npm ci

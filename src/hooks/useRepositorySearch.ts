@@ -1,23 +1,23 @@
 // リポジトリ検索用のカスタムHook
-import { useCallback, useEffect } from 'react'
-import useSWR from 'swr'
+import { useCallback, useEffect } from "react";
+import useSWR from "swr";
 
-import { 
-  validateSearchQuery, 
-  buildGitHubSearchQuery, 
-  createPopularRepositoryQuery, 
-  createRecentRepositoryQuery 
-} from '@/lib/search-domain'
-import { useSearchStore, buildSearchQuery } from '@/store/searchStore'
-import type { GitHubSearchResponse } from '@/types/github'
+import {
+  validateSearchQuery,
+  buildGitHubSearchQuery,
+  createPopularRepositoryQuery,
+  createRecentRepositoryQuery,
+} from "@/lib/search-domain";
+import { useSearchStore, buildSearchQuery } from "@/store/searchStore";
+import type { GitHubSearchResponse } from "@/types/github";
 
 interface UseRepositorySearchOptions {
-  enabled?: boolean
-  revalidateOnFocus?: boolean
-  revalidateOnReconnect?: boolean
-  refreshInterval?: number
-  onSuccess?: (data: GitHubSearchResponse) => void
-  onError?: (error: Error) => void
+  enabled?: boolean;
+  revalidateOnFocus?: boolean;
+  revalidateOnReconnect?: boolean;
+  refreshInterval?: number;
+  onSuccess?: (data: GitHubSearchResponse) => void;
+  onError?: (error: Error) => void;
 }
 
 export function useRepositorySearch(options: UseRepositorySearchOptions = {}) {
@@ -28,7 +28,7 @@ export function useRepositorySearch(options: UseRepositorySearchOptions = {}) {
     refreshInterval = 0,
     onSuccess,
     onError,
-  } = options
+  } = options;
 
   const {
     query,
@@ -47,42 +47,40 @@ export function useRepositorySearch(options: UseRepositorySearchOptions = {}) {
     incrementPage,
     resetResults,
     addToHistory,
-  } = useSearchStore()
+  } = useSearchStore();
 
   // SWR用のキー生成
   const getSearchKey = useCallback(() => {
-    if (!query.trim() || !enabled) return null
-    
-    const state = useSearchStore.getState()
-    const searchQuery = buildSearchQuery(state)
-    
+    if (!query.trim() || !enabled) return null;
+
+    const state = useSearchStore.getState();
+    const searchQuery = buildSearchQuery(state);
+
     const urlParams = new URLSearchParams({
       q: searchQuery.q,
       ...(searchQuery.sort && { sort: searchQuery.sort }),
-      ...(searchQuery.order && searchQuery.sort && { order: searchQuery.order }),
+      ...(searchQuery.order &&
+        searchQuery.sort && { order: searchQuery.order }),
       per_page: (searchQuery.per_page || 30).toString(),
       page: (searchQuery.page || 1).toString(),
-    })
-    
-    const apiUrl = `/api/repositories/search?${urlParams.toString()}`
-    
-    return [apiUrl]
-  }, [query, page, enabled])
+    });
+
+    const apiUrl = `/api/repositories/search?${urlParams.toString()}`;
+
+    return [apiUrl];
+  }, [query, enabled]);
 
   // SWR フェッチャー関数（API Routeを使用）
-  const fetcher = useCallback(
-    async (url: string) => {
-      const response = await fetch(url)
-      
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.error || 'APIエラーが発生しました')
-      }
-      
-      return response.json()
-    },
-    []
-  )
+  const fetcher = useCallback(async (url: string) => {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || "APIエラーが発生しました");
+    }
+
+    return response.json();
+  }, []);
 
   // SWR設定
   const {
@@ -96,89 +94,101 @@ export function useRepositorySearch(options: UseRepositorySearchOptions = {}) {
     revalidateOnReconnect,
     refreshInterval,
     onSuccess: (data) => {
-      onSuccess?.(data)
+      onSuccess?.(data);
     },
     onError: (error) => {
-      setError(error.message)
-      onError?.(error)
+      setError(error.message);
+      onError?.(error);
     },
-  })
+  });
 
   // データ更新の処理
   useEffect(() => {
     if (data) {
       if (page === 1) {
         // 新しい検索の場合は結果をリセット
-        setResults(data.items)
+        setResults(data.items);
       } else {
         // ページング時は結果を追加
-        addResults(data.items)
+        addResults(data.items);
       }
 
-      setTotalCount(data.total_count)
-      setHasMore(data.items.length === 30 && results.length + data.items.length < data.total_count)
-      setError(null)
+      setTotalCount(data.total_count);
+      setHasMore(
+        data.items.length === 30 &&
+          results.length + data.items.length < data.total_count,
+      );
+      setError(null);
     }
-  }, [data, page, addResults, setResults, setTotalCount, setHasMore, setError, results.length])
+  }, [
+    data,
+    page,
+    addResults,
+    setResults,
+    setTotalCount,
+    setHasMore,
+    setError,
+    results.length,
+  ]);
 
   // ローディング状態の管理
   useEffect(() => {
-    setLoading(isLoading || isValidating)
-  }, [isLoading, isValidating, setLoading])
+    setLoading(isLoading || isValidating);
+  }, [isLoading, isValidating, setLoading]);
 
   // エラー状態の管理
   useEffect(() => {
     if (swrError) {
-      setError(swrError.message)
+      setError(swrError.message);
     }
-  }, [swrError, setError])
+  }, [swrError, setError]);
 
   // 検索実行関数
   const search = useCallback(
     async (searchQuery: string, resetPage = true) => {
       // ドメインロジックによるバリデーション
-      const validation = validateSearchQuery(searchQuery)
+      const validation = validateSearchQuery(searchQuery);
       if (!validation.isValid) {
-        setError(validation.errors[0] || '無効な検索クエリです')
-        return
+        setError(validation.errors[0] || "無効な検索クエリです");
+        return;
       }
 
       // setQueryを呼び出して検索クエリを更新
-      const { setQuery } = useSearchStore.getState()
-      setQuery(searchQuery)
+      const { setQuery } = useSearchStore.getState();
+      setQuery(searchQuery);
 
       if (resetPage) {
-        resetResults()
+        resetResults();
       }
 
       // 検索履歴に追加
-      addToHistory(searchQuery)
+      addToHistory(searchQuery);
 
       // 検索実行（SWRのmutateを使用）
-      await mutate()
+      await mutate();
     },
-    [mutate, resetResults, addToHistory, setError]
-  )
+    [mutate, resetResults, addToHistory, setError],
+  );
 
   // 次のページを読み込む関数
   const loadMore = useCallback(async () => {
-    if (!hasMore || loading) return
+    if (!hasMore || loading) return;
 
-    incrementPage()
-    await mutate()
-  }, [hasMore, loading, incrementPage, mutate])
+    incrementPage();
+    await mutate();
+  }, [hasMore, loading, incrementPage, mutate]);
 
   // 高度な検索関数
   const advancedSearch = useCallback(
     async (
       searchQuery: string,
       options: {
-        language?: string
-        minStars?: number
-        maxStars?: number
-        sort?: 'stars' | 'forks' | 'updated'
-        order?: 'desc' | 'asc'
-      } = {}
+        language?: string;
+        minStars?: number;
+        maxStars?: number;
+        sort?: "stars" | "forks" | "updated";
+        order?: "desc" | "asc";
+      } = {},
     ) => {
       // ドメインロジックを使用してクエリを構築
       const enhancedQuery = buildGitHubSearchQuery({
@@ -186,97 +196,103 @@ export function useRepositorySearch(options: UseRepositorySearchOptions = {}) {
         language: options.language,
         minStars: options.minStars,
         maxStars: options.maxStars,
-        sort: options.sort || 'best-match',
-        order: options.order || 'desc'
-      })
-      await search(enhancedQuery)
+        sort: options.sort || "best-match",
+        order: options.order || "desc",
+      });
+      await search(enhancedQuery);
     },
-    [search]
-  )
+    [search],
+  );
 
   // 人気のリポジトリを取得（ドメインロジック使用）
   const searchPopular = useCallback(
     async (language?: string) => {
       try {
-        setLoading(true)
-        const query = createPopularRepositoryQuery(language)
-        
+        setLoading(true);
+        const query = createPopularRepositoryQuery(language);
+
         // setQueryを呼び出して検索クエリを更新
-        const { setQuery } = useSearchStore.getState()
-        setQuery(query)
-        resetResults()
-        
+        const { setQuery } = useSearchStore.getState();
+        setQuery(query);
+        resetResults();
+
         const url = `/api/repositories/search?${new URLSearchParams({
           q: query,
-          sort: 'stars',
-          order: 'desc',
-          per_page: '30',
-        }).toString()}`
-        
-        const response = await fetch(url)
+          sort: "stars",
+          order: "desc",
+          per_page: "30",
+        }).toString()}`;
+
+        const response = await fetch(url);
         if (!response.ok) {
-          throw new Error('人気のリポジトリの取得に失敗しました')
+          throw new Error("人気のリポジトリの取得に失敗しました");
         }
-        
-        const data: GitHubSearchResponse = await response.json()
-        setResults(data.items)
-        setTotalCount(data.total_count)
-        setHasMore(false)
-        setError(null)
+
+        const data: GitHubSearchResponse = await response.json();
+        setResults(data.items);
+        setTotalCount(data.total_count);
+        setHasMore(false);
+        setError(null);
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : '人気のリポジトリの取得に失敗しました'
-        setError(errorMessage)
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "人気のリポジトリの取得に失敗しました";
+        setError(errorMessage);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     },
-    [setLoading, setResults, setTotalCount, setHasMore, setError, resetResults]
-  )
+    [setLoading, setResults, setTotalCount, setHasMore, setError, resetResults],
+  );
 
   // 最近更新されたリポジトリを取得（ドメインロジック使用）
   const searchRecent = useCallback(
     async (language?: string) => {
       try {
-        setLoading(true)
-        const query = createRecentRepositoryQuery(language)
-        
+        setLoading(true);
+        const query = createRecentRepositoryQuery(language);
+
         // setQueryを呼び出して検索クエリを更新
-        const { setQuery } = useSearchStore.getState()
-        setQuery(query)
-        resetResults()
-        
+        const { setQuery } = useSearchStore.getState();
+        setQuery(query);
+        resetResults();
+
         const url = `/api/repositories/search?${new URLSearchParams({
           q: query,
-          sort: 'updated',
-          order: 'desc',
-          per_page: '30',
-        }).toString()}`
-        
-        const response = await fetch(url)
+          sort: "updated",
+          order: "desc",
+          per_page: "30",
+        }).toString()}`;
+
+        const response = await fetch(url);
         if (!response.ok) {
-          throw new Error('最近のリポジトリの取得に失敗しました')
+          throw new Error("最近のリポジトリの取得に失敗しました");
         }
-        
-        const data: GitHubSearchResponse = await response.json()
-        setResults(data.items)
-        setTotalCount(data.total_count)
-        setHasMore(false)
-        setError(null)
+
+        const data: GitHubSearchResponse = await response.json();
+        setResults(data.items);
+        setTotalCount(data.total_count);
+        setHasMore(false);
+        setError(null);
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : '最近のリポジトリの取得に失敗しました'
-        setError(errorMessage)
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "最近のリポジトリの取得に失敗しました";
+        setError(errorMessage);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     },
-    [setLoading, setResults, setTotalCount, setHasMore, setError, resetResults]
-  )
+    [setLoading, setResults, setTotalCount, setHasMore, setError, resetResults],
+  );
 
   // 検索状態のリセット
   const reset = useCallback(() => {
-    resetResults()
-    setError(null)
-  }, [resetResults, setError])
+    resetResults();
+    setError(null);
+  }, [resetResults, setError]);
 
   return {
     // 状態
@@ -288,7 +304,7 @@ export function useRepositorySearch(options: UseRepositorySearchOptions = {}) {
     page,
     totalCount,
     isValidating,
-    
+
     // アクション
     search,
     loadMore,
@@ -296,8 +312,8 @@ export function useRepositorySearch(options: UseRepositorySearchOptions = {}) {
     searchPopular,
     searchRecent,
     reset,
-    
+
     // SWR操作
     mutate,
-  }
+  };
 }

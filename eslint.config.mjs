@@ -14,27 +14,30 @@ const eslintConfig = [
   {
     rules: {
       // App Router特有のルール
-      '@next/next/no-duplicate-head': 'off', // App Routerでは不要
-      
+      "@next/next/no-duplicate-head": "off", // App Routerでは不要
+
       // 型安全性の強化
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
-      '@typescript-eslint/no-explicit-any': 'warn',
-      
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_" },
+      ],
+      "@typescript-eslint/no-explicit-any": "warn",
+
       // App Router Conventionsに準拠
-      'import/order': [
-        'error',
+      "import/order": [
+        "error",
         {
           groups: [
-            'builtin',
-            'external',
-            'internal',
-            'parent',
-            'sibling',
-            'index',
+            "builtin",
+            "external",
+            "internal",
+            "parent",
+            "sibling",
+            "index",
           ],
-          'newlines-between': 'always',
+          "newlines-between": "always",
           alphabetize: {
-            order: 'asc',
+            order: "asc",
             caseInsensitive: true,
           },
         },
@@ -42,7 +45,7 @@ const eslintConfig = [
     },
   },
   {
-    files: ['**/__tests__/**/*', '**/*.{test,spec}.*'],
+    files: ["**/__tests__/**/*", "**/*.{test,spec}.*"],
     languageOptions: {
       globals: {
         jest: true,
@@ -57,7 +60,7 @@ const eslintConfig = [
     },
   },
   {
-    files: ['e2e/**/*'],
+    files: ["e2e/**/*"],
     languageOptions: {
       globals: {
         browser: true,

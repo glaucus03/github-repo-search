@@ -1,33 +1,34 @@
 // SEO・メタデータ管理ユーティリティ
-import type { Metadata } from 'next'
+import type { Metadata } from "next";
 
-import type { GitHubRepository } from '@/types/github'
+import type { GitHubRepository } from "@/types/github";
 
 // サイト基本情報
 export const SITE_CONFIG = {
-  name: 'GitHub Repository Search',
-  description: 'GitHubリポジトリを効率的に検索し、お気に入りのプロジェクトを見つけるためのモダンなWebアプリケーション',
-  url: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
-  ogImage: '/og-image.png',
-  author: 'GitHub Search Team',
+  name: "GitHub Repository Search",
+  description:
+    "GitHubリポジトリを効率的に検索し、お気に入りのプロジェクトを見つけるためのモダンなWebアプリケーション",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
+  ogImage: "/og-image.png",
+  author: "GitHub Search Team",
   keywords: [
-    'GitHub',
-    'Repository',
-    'Search',
-    'Development',
-    'Open Source',
-    'Programming',
-    'Code',
-    'Developer Tools',
-    'Software Development',
-    '開発',
-    'プログラミング',
-    'ソフトウェア開発',
-    'オープンソース'
+    "GitHub",
+    "Repository",
+    "Search",
+    "Development",
+    "Open Source",
+    "Programming",
+    "Code",
+    "Developer Tools",
+    "Software Development",
+    "開発",
+    "プログラミング",
+    "ソフトウェア開発",
+    "オープンソース",
   ],
-  creator: '@github-search',
-  publisher: 'GitHub Search',
-}
+  creator: "@github-search",
+  publisher: "GitHub Search",
+};
 
 // ベースメタデータ
 export const baseMetadata: Metadata = {
@@ -41,11 +42,11 @@ export const baseMetadata: Metadata = {
   authors: [{ name: SITE_CONFIG.author }],
   creator: SITE_CONFIG.creator,
   publisher: SITE_CONFIG.publisher,
-  
+
   // Open Graph
   openGraph: {
-    type: 'website',
-    locale: 'ja_JP',
+    type: "website",
+    locale: "ja_JP",
     url: SITE_CONFIG.url,
     title: SITE_CONFIG.name,
     description: SITE_CONFIG.description,
@@ -59,31 +60,31 @@ export const baseMetadata: Metadata = {
       },
     ],
   },
-  
+
   // Twitter Card
   twitter: {
-    card: 'summary_large_image',
+    card: "summary_large_image",
     title: SITE_CONFIG.name,
     description: SITE_CONFIG.description,
     creator: SITE_CONFIG.creator,
     images: [SITE_CONFIG.ogImage],
   },
-  
+
   // Favicon
   icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon-16x16.png',
-    apple: '/apple-touch-icon.png',
+    icon: "/favicon.ico",
+    shortcut: "/favicon-16x16.png",
+    apple: "/apple-touch-icon.png",
   },
-  
+
   // その他
-  manifest: '/manifest.json',
-  viewport: 'width=device-width, initial-scale=1',
+  manifest: "/manifest.json",
+  viewport: "width=device-width, initial-scale=1",
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
-    { media: '(prefers-color-scheme: dark)', color: '#000000' },
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#000000" },
   ],
-  
+
   // 検索エンジン向け
   robots: {
     index: true,
@@ -91,46 +92,52 @@ export const baseMetadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
     },
   },
-  
+
   // 検証用
   verification: {
     google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
     yandex: process.env.NEXT_PUBLIC_YANDEX_VERIFICATION,
     yahoo: process.env.NEXT_PUBLIC_YAHOO_SITE_VERIFICATION,
   },
-}
+};
 
 // ページ固有メタデータ生成関数
 
 // ホームページ
 export function generateHomeMetadata(): Metadata {
   return {
-    title: 'ホーム',
-    description: 'GitHubリポジトリを検索して、お気に入りのオープンソースプロジェクトを見つけましょう。',
+    title: "ホーム",
+    description:
+      "GitHubリポジトリを検索して、お気に入りのオープンソースプロジェクトを見つけましょう。",
     openGraph: {
       title: `${SITE_CONFIG.name} - GitHubリポジトリ検索`,
-      description: 'GitHubリポジトリを検索して、お気に入りのオープンソースプロジェクトを見つけましょう。',
+      description:
+        "GitHubリポジトリを検索して、お気に入りのオープンソースプロジェクトを見つけましょう。",
       url: SITE_CONFIG.url,
     },
     twitter: {
       title: `${SITE_CONFIG.name} - GitHubリポジトリ検索`,
-      description: 'GitHubリポジトリを検索して、お気に入りのオープンソースプロジェクトを見つけましょう。',
+      description:
+        "GitHubリポジトリを検索して、お気に入りのオープンソースプロジェクトを見つけましょう。",
     },
-  }
+  };
 }
 
 // 検索結果ページ
-export function generateSearchMetadata(query: string, resultCount?: number): Metadata {
-  const title = `"${query}"の検索結果`
-  const description = resultCount 
+export function generateSearchMetadata(
+  query: string,
+  resultCount?: number,
+): Metadata {
+  const title = `"${query}"の検索結果`;
+  const description = resultCount
     ? `"${query}"の検索結果 ${resultCount.toLocaleString()}件のリポジトリが見つかりました。`
-    : `"${query}"に関連するGitHubリポジトリを検索しています。`
-  
+    : `"${query}"に関連するGitHubリポジトリを検索しています。`;
+
   return {
     title,
     description,
@@ -148,23 +155,26 @@ export function generateSearchMetadata(query: string, resultCount?: number): Met
       index: false,
       follow: true,
     },
-  }
+  };
 }
 
 // リポジトリ詳細ページ
-export function generateRepositoryMetadata(repository: GitHubRepository): Metadata {
-  const title = `${repository.owner.login}/${repository.name}`
-  const description = repository.description || 
-    `${repository.owner.login}による${repository.name}リポジトリの詳細情報。Stars: ${repository.stargazers_count.toLocaleString()}, Forks: ${repository.forks_count.toLocaleString()}`
-  
+export function generateRepositoryMetadata(
+  repository: GitHubRepository,
+): Metadata {
+  const title = `${repository.owner.login}/${repository.name}`;
+  const description =
+    repository.description ||
+    `${repository.owner.login}による${repository.name}リポジトリの詳細情報。Stars: ${repository.stargazers_count.toLocaleString()}, Forks: ${repository.forks_count.toLocaleString()}`;
+
   const keywords = [
     repository.name,
     repository.owner.login,
     ...(repository.topics || []),
     repository.language,
-    'GitHub',
-    'Repository',
-  ].filter((keyword): keyword is string => Boolean(keyword))
+    "GitHub",
+    "Repository",
+  ].filter((keyword): keyword is string => Boolean(keyword));
 
   return {
     title,
@@ -188,15 +198,16 @@ export function generateRepositoryMetadata(repository: GitHubRepository): Metada
       description,
       images: [repository.owner.avatar_url],
     },
-  }
+  };
 }
 
 // お気に入りページ
 export function generateFavoritesMetadata(favoriteCount: number): Metadata {
-  const title = 'お気に入りリポジトリ'
-  const description = favoriteCount > 0
-    ? `${favoriteCount}件のお気に入りリポジトリを管理しています。`
-    : 'お気に入りのGitHubリポジトリを管理しましょう。'
+  const title = "お気に入りリポジトリ";
+  const description =
+    favoriteCount > 0
+      ? `${favoriteCount}件のお気に入りリポジトリを管理しています。`
+      : "お気に入りのGitHubリポジトリを管理しましょう。";
 
   return {
     title,
@@ -215,15 +226,16 @@ export function generateFavoritesMetadata(favoriteCount: number): Metadata {
       index: false,
       follow: false,
     },
-  }
+  };
 }
 
 // 履歴ページ
 export function generateHistoryMetadata(historyCount: number): Metadata {
-  const title = '検索履歴'
-  const description = historyCount > 0
-    ? `${historyCount}件の検索履歴があります。`
-    : '検索履歴を管理して、効率的にリポジトリを見つけましょう。'
+  const title = "検索履歴";
+  const description =
+    historyCount > 0
+      ? `${historyCount}件の検索履歴があります。`
+      : "検索履歴を管理して、効率的にリポジトリを見つけましょう。";
 
   return {
     title,
@@ -242,7 +254,7 @@ export function generateHistoryMetadata(historyCount: number): Metadata {
       index: false,
       follow: false,
     },
-  }
+  };
 }
 
 // JSON-LD構造化データ生成
@@ -250,60 +262,60 @@ export function generateHistoryMetadata(historyCount: number): Metadata {
 // WebSite構造化データ
 export function generateWebsiteStructuredData() {
   return {
-    '@context': 'https://schema.org',
-    '@type': 'WebSite',
+    "@context": "https://schema.org",
+    "@type": "WebSite",
     name: SITE_CONFIG.name,
     description: SITE_CONFIG.description,
     url: SITE_CONFIG.url,
     potentialAction: {
-      '@type': 'SearchAction',
+      "@type": "SearchAction",
       target: {
-        '@type': 'EntryPoint',
+        "@type": "EntryPoint",
         urlTemplate: `${SITE_CONFIG.url}/?q={search_term_string}`,
       },
-      'query-input': 'required name=search_term_string',
+      "query-input": "required name=search_term_string",
     },
     author: {
-      '@type': 'Organization',
+      "@type": "Organization",
       name: SITE_CONFIG.author,
     },
-  }
+  };
 }
 
 // SoftwareApplication構造化データ
 export function generateApplicationStructuredData() {
   return {
-    '@context': 'https://schema.org',
-    '@type': 'SoftwareApplication',
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
     name: SITE_CONFIG.name,
     description: SITE_CONFIG.description,
     url: SITE_CONFIG.url,
-    applicationCategory: 'DeveloperApplication',
-    operatingSystem: 'Web Browser',
+    applicationCategory: "DeveloperApplication",
+    operatingSystem: "Web Browser",
     offers: {
-      '@type': 'Offer',
-      price: '0',
-      priceCurrency: 'JPY',
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "JPY",
     },
     author: {
-      '@type': 'Organization',
+      "@type": "Organization",
       name: SITE_CONFIG.author,
     },
-  }
+  };
 }
 
 // リポジトリ用のSoftwareSourceCode構造化データ
 export function generateRepositoryStructuredData(repository: GitHubRepository) {
   return {
-    '@context': 'https://schema.org',
-    '@type': 'SoftwareSourceCode',
+    "@context": "https://schema.org",
+    "@type": "SoftwareSourceCode",
     name: repository.name,
     description: repository.description,
     url: repository.html_url,
     codeRepository: repository.html_url,
     programmingLanguage: repository.language,
     author: {
-      '@type': 'Person',
+      "@type": "Person",
       name: repository.owner.login,
       url: `https://github.com/${repository.owner.login}`,
     },
@@ -311,21 +323,23 @@ export function generateRepositoryStructuredData(repository: GitHubRepository) {
     dateModified: repository.updated_at,
     license: repository.license?.name,
     keywords: repository.topics,
-  }
+  };
 }
 
 // BreadcrumbList構造化データ
-export function generateBreadcrumbStructuredData(breadcrumbs: Array<{ name: string; url: string }>) {
+export function generateBreadcrumbStructuredData(
+  breadcrumbs: Array<{ name: string; url: string }>,
+) {
   return {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
     itemListElement: breadcrumbs.map((breadcrumb, index) => ({
-      '@type': 'ListItem',
+      "@type": "ListItem",
       position: index + 1,
       name: breadcrumb.name,
       item: breadcrumb.url,
     })),
-  }
+  };
 }
 
 // SEO監査用の関数
@@ -336,31 +350,34 @@ export function generateSEOAudit(metadata: Metadata) {
     hasKeywords: !!metadata.keywords,
     hasOpenGraph: !!metadata.openGraph,
     hasTwitterCard: !!metadata.twitter,
-    titleLength: typeof metadata.title === 'string' ? metadata.title.length : 0,
-    descriptionLength: typeof metadata.description === 'string' ? metadata.description.length : 0,
+    titleLength: typeof metadata.title === "string" ? metadata.title.length : 0,
+    descriptionLength:
+      typeof metadata.description === "string"
+        ? metadata.description.length
+        : 0,
     recommendations: [] as string[],
-  }
+  };
 
   // SEO推奨事項のチェック
   if (audit.titleLength === 0) {
-    audit.recommendations.push('タイトルを設定してください')
+    audit.recommendations.push("タイトルを設定してください");
   } else if (audit.titleLength > 60) {
-    audit.recommendations.push('タイトルが長すぎます（60文字以内推奨）')
+    audit.recommendations.push("タイトルが長すぎます（60文字以内推奨）");
   }
 
   if (audit.descriptionLength === 0) {
-    audit.recommendations.push('説明文を設定してください')
+    audit.recommendations.push("説明文を設定してください");
   } else if (audit.descriptionLength > 160) {
-    audit.recommendations.push('説明文が長すぎます（160文字以内推奨）')
+    audit.recommendations.push("説明文が長すぎます（160文字以内推奨）");
   }
 
   if (!audit.hasOpenGraph) {
-    audit.recommendations.push('Open Graphタグを設定してください')
+    audit.recommendations.push("Open Graphタグを設定してください");
   }
 
   if (!audit.hasTwitterCard) {
-    audit.recommendations.push('Twitter Cardタグを設定してください')
+    audit.recommendations.push("Twitter Cardタグを設定してください");
   }
 
-  return audit
+  return audit;
 }

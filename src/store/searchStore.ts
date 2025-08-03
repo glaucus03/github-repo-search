@@ -1,82 +1,86 @@
 // 検索状態管理用のZustandストア
-import { create } from 'zustand'
-import { devtools } from 'zustand/middleware'
+import { create } from "zustand";
+import { devtools } from "zustand/middleware";
 
-import { SearchHistoryStorage } from '@/lib/storage'
-import { validateSearchQuery, calculateRepositoryQuality, calculateSearchStatistics } from '@/lib/search-domain'
-import type { SearchState } from '@/types'
-import type { GitHubRepository, GitHubSearchQuery } from '@/types/github'
+import {
+  validateSearchQuery,
+  calculateRepositoryQuality,
+  calculateSearchStatistics,
+} from "@/lib/search-domain";
+import { SearchHistoryStorage } from "@/lib/storage";
+import type { SearchState } from "@/types";
+import type { GitHubRepository, GitHubSearchQuery } from "@/types/github";
 
 interface SearchStore extends SearchState {
   // アクション
-  setQuery: (query: string) => void
-  setResults: (results: GitHubRepository[]) => void
-  addResults: (results: GitHubRepository[]) => void
-  setLoading: (loading: boolean) => void
-  setError: (error: string | null) => void
-  setHasMore: (hasMore: boolean) => void
-  setPage: (page: number) => void
-  incrementPage: () => void
-  setTotalCount: (totalCount: number) => void
-  
+  setQuery: (query: string) => void;
+  setResults: (results: GitHubRepository[]) => void;
+  addResults: (results: GitHubRepository[]) => void;
+  setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
+  setHasMore: (hasMore: boolean) => void;
+  setPage: (page: number) => void;
+  incrementPage: () => void;
+  setTotalCount: (totalCount: number) => void;
+
   // 検索オプション
   searchOptions: {
-    sort: 'stars' | 'forks' | 'updated' | 'best-match'
-    order: 'desc' | 'asc'
-    language?: string
-    minStars?: number
-    maxStars?: number
-  }
-  setSearchOptions: (options: Partial<SearchStore['searchOptions']>) => void
-  
+    sort: "stars" | "forks" | "updated" | "best-match";
+    order: "desc" | "asc";
+    language?: string;
+    minStars?: number;
+    maxStars?: number;
+  };
+  setSearchOptions: (options: Partial<SearchStore["searchOptions"]>) => void;
+
   // 履歴管理
-  searchHistory: string[]
-  addToHistory: (query: string) => void
-  removeFromHistory: (query: string) => void
-  clearHistory: () => void
-  loadHistory: () => void
-  
+  searchHistory: string[];
+  addToHistory: (query: string) => void;
+  removeFromHistory: (query: string) => void;
+  clearHistory: () => void;
+  loadHistory: () => void;
+
   // ドメインロジック統合
-  queryValidation: { isValid: boolean; errors: string[] }
-  validateQuery: (query: string) => boolean
-  getRepositoryQuality: (repository: GitHubRepository) => number
+  queryValidation: { isValid: boolean; errors: string[] };
+  validateQuery: (query: string) => boolean;
+  getRepositoryQuality: (repository: GitHubRepository) => number;
   getSearchStatistics: () => {
-    totalCount: number
-    averageStars: number
-    averageForks: number
-    languageDistribution: Map<string, number>
+    totalCount: number;
+    averageStars: number;
+    averageForks: number;
+    languageDistribution: Map<string, number>;
     qualityDistribution: {
-      excellent: number
-      good: number
-      fair: number
-      poor: number
-    }
-  }
-  
+      excellent: number;
+      good: number;
+      fair: number;
+      poor: number;
+    };
+  };
+
   // リセット機能
-  resetSearch: () => void
-  resetResults: () => void
+  resetSearch: () => void;
+  resetResults: () => void;
 }
 
 const initialState: Pick<SearchStore, keyof SearchState> = {
-  query: '',
+  query: "",
   results: [],
   loading: false,
   error: null,
   hasMore: true,
   page: 1,
   totalCount: 0,
-}
+};
 
 const initialQueryValidation = {
   isValid: true,
-  errors: []
-}
+  errors: [],
+};
 
-const initialSearchOptions: SearchStore['searchOptions'] = {
-  sort: 'best-match',
-  order: 'desc',
-}
+const initialSearchOptions: SearchStore["searchOptions"] = {
+  sort: "best-match",
+  order: "desc",
+};
 
 export const useSearchStore = create<SearchStore>()(
   devtools(
@@ -87,11 +91,9 @@ export const useSearchStore = create<SearchStore>()(
       searchHistory: [],
 
       // 基本的なセッター
-      setQuery: (query) =>
-        set({ query }, false, 'search/setQuery'),
+      setQuery: (query) => set({ query }, false, "search/setQuery"),
 
-      setResults: (results) =>
-        set({ results }, false, 'search/setResults'),
+      setResults: (results) => set({ results }, false, "search/setResults"),
 
       addResults: (newResults) =>
         set(
@@ -99,30 +101,26 @@ export const useSearchStore = create<SearchStore>()(
             results: [...state.results, ...newResults],
           }),
           false,
-          'search/addResults'
+          "search/addResults",
         ),
 
-      setLoading: (loading) =>
-        set({ loading }, false, 'search/setLoading'),
+      setLoading: (loading) => set({ loading }, false, "search/setLoading"),
 
-      setError: (error) =>
-        set({ error }, false, 'search/setError'),
+      setError: (error) => set({ error }, false, "search/setError"),
 
-      setHasMore: (hasMore) =>
-        set({ hasMore }, false, 'search/setHasMore'),
+      setHasMore: (hasMore) => set({ hasMore }, false, "search/setHasMore"),
 
-      setPage: (page) =>
-        set({ page }, false, 'search/setPage'),
+      setPage: (page) => set({ page }, false, "search/setPage"),
 
       incrementPage: () =>
         set(
           (state) => ({ page: state.page + 1 }),
           false,
-          'search/incrementPage'
+          "search/incrementPage",
         ),
 
       setTotalCount: (totalCount) =>
-        set({ totalCount }, false, 'search/setTotalCount'),
+        set({ totalCount }, false, "search/setTotalCount"),
 
       // 検索オプション
       setSearchOptions: (options) =>
@@ -131,7 +129,7 @@ export const useSearchStore = create<SearchStore>()(
             searchOptions: { ...state.searchOptions, ...options },
           }),
           false,
-          'search/setSearchOptions'
+          "search/setSearchOptions",
         ),
 
       // 履歴管理
@@ -141,42 +139,42 @@ export const useSearchStore = create<SearchStore>()(
             searchHistory: SearchHistoryStorage.getHistory(),
           }),
           false,
-          'search/loadHistory'
+          "search/loadHistory",
         ),
 
       addToHistory: (query) =>
         set(
           (state) => {
-            const trimmedQuery = query.trim()
-            if (!trimmedQuery) return state
+            const trimmedQuery = query.trim();
+            if (!trimmedQuery) return state;
 
-            SearchHistoryStorage.addToHistory(trimmedQuery)
-            const newHistory = SearchHistoryStorage.getHistory()
-            return { searchHistory: newHistory }
+            SearchHistoryStorage.addToHistory(trimmedQuery);
+            const newHistory = SearchHistoryStorage.getHistory();
+            return { searchHistory: newHistory };
           },
           false,
-          'search/addToHistory'
+          "search/addToHistory",
         ),
 
       removeFromHistory: (query) =>
         set(
           () => {
-            SearchHistoryStorage.removeFromHistory(query)
-            const newHistory = SearchHistoryStorage.getHistory()
-            return { searchHistory: newHistory }
+            SearchHistoryStorage.removeFromHistory(query);
+            const newHistory = SearchHistoryStorage.getHistory();
+            return { searchHistory: newHistory };
           },
           false,
-          'search/removeFromHistory'
+          "search/removeFromHistory",
         ),
 
       clearHistory: () =>
         set(
           () => {
-            SearchHistoryStorage.clearHistory()
-            return { searchHistory: [] }
+            SearchHistoryStorage.clearHistory();
+            return { searchHistory: [] };
           },
           false,
-          'search/clearHistory'
+          "search/clearHistory",
         ),
 
       // リセット機能
@@ -187,7 +185,7 @@ export const useSearchStore = create<SearchStore>()(
             searchHistory: get().searchHistory, // 履歴は保持
           },
           false,
-          'search/resetSearch'
+          "search/resetSearch",
         ),
 
       resetResults: () =>
@@ -200,30 +198,30 @@ export const useSearchStore = create<SearchStore>()(
             error: null,
           },
           false,
-          'search/resetResults'
+          "search/resetResults",
         ),
 
       // ドメインロジック統合機能
       validateQuery: (query) => {
-        const validation = validateSearchQuery(query)
-        set({ queryValidation: validation }, false, 'search/validateQuery')
-        return validation.isValid
+        const validation = validateSearchQuery(query);
+        set({ queryValidation: validation }, false, "search/validateQuery");
+        return validation.isValid;
       },
 
       getRepositoryQuality: (repository) => {
-        return calculateRepositoryQuality(repository)
+        return calculateRepositoryQuality(repository);
       },
 
       getSearchStatistics: () => {
-        const { results } = get()
-        return calculateSearchStatistics(results)
+        const { results } = get();
+        return calculateSearchStatistics(results);
       },
     }),
     {
-      name: 'search-store',
-    }
-  )
-)
+      name: "search-store",
+    },
+  ),
+);
 
 // セレクター関数（パフォーマンス最適化用）
 export const selectSearchState = (state: SearchStore) => ({
@@ -234,21 +232,22 @@ export const selectSearchState = (state: SearchStore) => ({
   hasMore: state.hasMore,
   page: state.page,
   totalCount: state.totalCount,
-})
+});
 
-export const selectSearchOptions = (state: SearchStore) => state.searchOptions
+export const selectSearchOptions = (state: SearchStore) => state.searchOptions;
 
-export const selectSearchHistory = (state: SearchStore) => state.searchHistory
+export const selectSearchHistory = (state: SearchStore) => state.searchHistory;
 
 // 検索クエリを構築するヘルパー関数
 export const buildSearchQuery = (store: SearchStore): GitHubSearchQuery => {
-  const { query, page, searchOptions } = store
-  
+  const { query, page, searchOptions } = store;
+
   return {
     q: query,
-    sort: searchOptions.sort === 'best-match' ? undefined : searchOptions.sort,
-    order: searchOptions.sort === 'best-match' ? undefined : searchOptions.order,
+    sort: searchOptions.sort === "best-match" ? undefined : searchOptions.sort,
+    order:
+      searchOptions.sort === "best-match" ? undefined : searchOptions.order,
     per_page: 30, // デフォルトのページサイズ
     page,
-  }
-}
+  };
+};

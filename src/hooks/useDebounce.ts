@@ -1,5 +1,5 @@
 // デバウンス処理用のカスタムHook
-import { useEffect, useState, useRef, useCallback } from 'react'
+import { useEffect, useState, useRef, useCallback } from "react";
 
 /**
  * 値をデバウンスするHook
@@ -8,19 +8,19 @@ import { useEffect, useState, useRef, useCallback } from 'react'
  * @returns デバウンスされた値
  */
 export function useDebounce<T>(value: T, delay: number): T {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value)
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
 
   useEffect(() => {
     const handler = setTimeout(() => {
-      setDebouncedValue(value)
-    }, delay)
+      setDebouncedValue(value);
+    }, delay);
 
     return () => {
-      clearTimeout(handler)
-    }
-  }, [value, delay])
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
 
-  return debouncedValue
+  return debouncedValue;
 }
 
 /**
@@ -33,40 +33,40 @@ export function useDebounce<T>(value: T, delay: number): T {
 export function useDebouncedCallback<T extends (...args: unknown[]) => unknown>(
   callback: T,
   delay: number,
-  deps: React.DependencyList = []
+  deps: React.DependencyList = [],
 ): T {
-  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
-  const callbackRef = useRef(callback)
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
+  const callbackRef = useRef(callback);
 
   // コールバックを最新に保つ
   useEffect(() => {
-    callbackRef.current = callback
-  }, [callback])
+    callbackRef.current = callback;
+  }, [callback]);
 
   const debouncedCallback = useCallback(
     (...args: Parameters<T>) => {
       if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
+        clearTimeout(timeoutRef.current);
       }
 
       timeoutRef.current = setTimeout(() => {
-        callbackRef.current(...args)
-      }, delay)
+        callbackRef.current(...args);
+      }, delay);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [delay, ...deps]
-  ) as T
+    [delay, ...deps],
+  ) as T;
 
   // クリーンアップ
   useEffect(() => {
     return () => {
       if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
+        clearTimeout(timeoutRef.current);
       }
-    }
-  }, [])
+    };
+  }, []);
 
-  return debouncedCallback
+  return debouncedCallback;
 }
 
 /**
@@ -75,37 +75,37 @@ export function useDebouncedCallback<T extends (...args: unknown[]) => unknown>(
  * @returns [isPending, startDelay, cancelDelay]
  */
 export function useDebounceState(delay: number) {
-  const [isPending, setIsPending] = useState(false)
-  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
+  const [isPending, setIsPending] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   const startDelay = useCallback(() => {
     if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current)
+      clearTimeout(timeoutRef.current);
     }
 
-    setIsPending(true)
+    setIsPending(true);
 
     timeoutRef.current = setTimeout(() => {
-      setIsPending(false)
-    }, delay)
-  }, [delay])
+      setIsPending(false);
+    }, delay);
+  }, [delay]);
 
   const cancelDelay = useCallback(() => {
     if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current)
-      setIsPending(false)
+      clearTimeout(timeoutRef.current);
+      setIsPending(false);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     return () => {
       if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
+        clearTimeout(timeoutRef.current);
       }
-    }
-  }, [])
+    };
+  }, []);
 
-  return [isPending, startDelay, cancelDelay] as const
+  return [isPending, startDelay, cancelDelay] as const;
 }
 
 /**
@@ -116,59 +116,59 @@ export function useDebounceState(delay: number) {
  * @returns [value, debouncedValue, setValue, isDebouncing]
  */
 export function useSearchDebounce(
-  initialValue: string = '',
+  initialValue: string = "",
   delay: number = 300,
-  minLength: number = 2
+  minLength: number = 2,
 ) {
-  const [value, setValue] = useState(initialValue)
-  const [debouncedValue, setDebouncedValue] = useState(initialValue)
-  const [isDebouncing, setIsDebouncing] = useState(false)
-  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
+  const [value, setValue] = useState(initialValue);
+  const [debouncedValue, setDebouncedValue] = useState(initialValue);
+  const [isDebouncing, setIsDebouncing] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   useEffect(() => {
     if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current)
+      clearTimeout(timeoutRef.current);
     }
 
     // 最小文字数未満の場合は即座に更新
     if (value.length < minLength) {
-      setDebouncedValue(value)
-      setIsDebouncing(false)
-      return
+      setDebouncedValue(value);
+      setIsDebouncing(false);
+      return;
     }
 
-    setIsDebouncing(true)
+    setIsDebouncing(true);
 
     timeoutRef.current = setTimeout(() => {
-      setDebouncedValue(value)
-      setIsDebouncing(false)
-    }, delay)
+      setDebouncedValue(value);
+      setIsDebouncing(false);
+    }, delay);
 
     return () => {
       if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
+        clearTimeout(timeoutRef.current);
       }
-    }
-  }, [value, delay, minLength])
+    };
+  }, [value, delay, minLength]);
 
   // 値をクリアする関数
   const clear = useCallback(() => {
-    setValue('')
-    setDebouncedValue('')
-    setIsDebouncing(false)
+    setValue("");
+    setDebouncedValue("");
+    setIsDebouncing(false);
     if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current)
+      clearTimeout(timeoutRef.current);
     }
-  }, [])
+  }, []);
 
   // 即座に値を更新する関数
   const flush = useCallback(() => {
     if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current)
+      clearTimeout(timeoutRef.current);
     }
-    setDebouncedValue(value)
-    setIsDebouncing(false)
-  }, [value])
+    setDebouncedValue(value);
+    setIsDebouncing(false);
+  }, [value]);
 
   return {
     value,
@@ -177,5 +177,5 @@ export function useSearchDebounce(
     isDebouncing,
     clear,
     flush,
-  }
+  };
 }

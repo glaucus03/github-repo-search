@@ -1,18 +1,18 @@
-'use client'
+"use client";
 
-import Link from 'next/link'
-import { useEffect } from 'react'
+import Link from "next/link";
+import { useEffect } from "react";
 
 export default function Error({
   error,
   reset,
 }: {
-  error: Error & { digest?: string }
-  reset: () => void
+  error: Error & { digest?: string };
+  reset: () => void;
 }) {
   useEffect(() => {
-    console.error('Repository detail error:', error)
-  }, [error])
+    console.error("Repository detail error:", error);
+  }, [error]);
 
   return (
     <div className="search-container">
@@ -21,7 +21,8 @@ export default function Error({
           Repository not found
         </h2>
         <p className="text-muted-foreground mb-6">
-          The repository you&apos;re looking for doesn&apos;t exist or is not accessible.
+          The repository you&apos;re looking for doesn&apos;t exist or is not
+          accessible.
         </p>
         <div className="space-x-4">
           <button
@@ -39,5 +40,5 @@ export default function Error({
         </div>
       </div>
     </div>
-  )
+  );
 }

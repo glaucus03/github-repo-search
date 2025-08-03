@@ -1,42 +1,42 @@
-'use client'
+"use client";
 
 // フッターコンポーネント
 import {
   HeartIcon,
   CodeBracketIcon,
   StarIcon,
-} from '@heroicons/react/24/outline'
-import { Link, Divider } from '@heroui/react'
+} from "@heroicons/react/24/outline";
+import { Link, Divider } from "@heroui/react";
 
 export function Footer() {
-  const currentYear = new Date().getFullYear()
+  const currentYear = new Date().getFullYear();
 
   const footerLinks = [
     {
-      title: 'プロジェクト',
+      title: "プロジェクト",
       links: [
-        { label: 'GitHub', href: 'https://github.com' },
-        { label: 'ドキュメント', href: '#' },
-        { label: 'API', href: 'https://docs.github.com/rest' },
+        { label: "GitHub", href: "https://github.com" },
+        { label: "ドキュメント", href: "#" },
+        { label: "API", href: "https://docs.github.com/rest" },
       ],
     },
     {
-      title: 'リソース',
+      title: "リソース",
       links: [
-        { label: 'Next.js', href: 'https://nextjs.org' },
-        { label: 'HeroUI', href: 'https://heroui.com' },
-        { label: 'Tailwind CSS', href: 'https://tailwindcss.com' },
+        { label: "Next.js", href: "https://nextjs.org" },
+        { label: "HeroUI", href: "https://heroui.com" },
+        { label: "Tailwind CSS", href: "https://tailwindcss.com" },
       ],
     },
     {
-      title: 'コミュニティ',
+      title: "コミュニティ",
       links: [
-        { label: 'Issues', href: '#' },
-        { label: 'Discussions', href: '#' },
-        { label: 'Contributing', href: '#' },
+        { label: "Issues", href: "#" },
+        { label: "Discussions", href: "#" },
+        { label: "Contributing", href: "#" },
       ],
     },
-  ]
+  ];
 
   return (
     <footer className="bg-default-50 border-t border-divider mt-16">
@@ -76,7 +76,7 @@ export function Footer() {
                     <li key={link.label}>
                       <Link
                         href={link.href}
-                        isExternal={link.href.startsWith('http')}
+                        isExternal={link.href.startsWith("http")}
                         className="text-sm text-default-600 hover:text-primary transition-colors"
                       >
                         {link.label}
@@ -119,5 +119,5 @@ export function Footer() {
         </div>
       </div>
     </footer>
-  )
+  );
 }

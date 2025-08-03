@@ -1,7 +1,9 @@
 /* GitHub風Markdownスタイル */
 
 .markdownWrapper {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica,
+    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
   font-size: 16px;
   line-height: 1.5;
   word-wrap: break-word;
@@ -81,14 +83,20 @@
 }
 
 /* 通常の画像（バッジ以外） */
-.markdownWrapper :global(img:not([src*="shields.io"]):not([src*="badge"]):not([alt*="badge"])) {
+.markdownWrapper
+  :global(
+    img:not([src*="shields.io"]):not([src*="badge"]):not([alt*="badge"])
+  ) {
   display: block;
   margin: 16px auto;
   border-radius: 6px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.markdownWrapper[data-color-mode="dark"] :global(img:not([src*="shields.io"]):not([src*="badge"]):not([alt*="badge"])) {
+.markdownWrapper[data-color-mode="dark"]
+  :global(
+    img:not([src*="shields.io"]):not([src*="badge"]):not([alt*="badge"])
+  ) {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
@@ -147,7 +155,9 @@
   font-size: 85%;
   background-color: rgba(175, 184, 193, 0.2);
   border-radius: 3px;
-  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-family:
+    ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo,
+    monospace;
 }
 
 .markdownWrapper[data-color-mode="dark"] :global(code) {

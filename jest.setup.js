@@ -1,20 +1,20 @@
 // Jest DOM テスト用のカスタムマッチャーをインポート
-import '@testing-library/jest-dom'
+import "@testing-library/jest-dom";
 
 // framer-motionのモック
-jest.mock('framer-motion', () => ({
+jest.mock("framer-motion", () => ({
   motion: {
     div: ({ children, ...props }) => {
-      const { createElement } = require('react')
-      return createElement('div', props, children)
+      const { createElement } = require("react");
+      return createElement("div", props, children);
     },
     button: ({ children, ...props }) => {
-      const { createElement } = require('react')
-      return createElement('button', props, children)
+      const { createElement } = require("react");
+      return createElement("button", props, children);
     },
     span: ({ children, ...props }) => {
-      const { createElement } = require('react')
-      return createElement('span', props, children)
+      const { createElement } = require("react");
+      return createElement("span", props, children);
     },
   },
   AnimatePresence: ({ children }) => children,
@@ -28,25 +28,30 @@ jest.mock('framer-motion', () => ({
   useDragControls: () => ({
     start: jest.fn(),
   }),
-}))
+}));
 
 // HeroUI のモック設定
-jest.mock('@heroui/react', () => {
-  const React = require('react')
+jest.mock("@heroui/react", () => {
+  const React = require("react");
   return {
-    ...jest.requireActual('@heroui/react'),
+    ...jest.requireActual("@heroui/react"),
     // アニメーション関連のコンポーネントをシンプルなモックに置き換え
-    Button: ({ children, ...props }) => React.createElement('button', props, children),
-    Navbar: ({ children, ...props }) => React.createElement('nav', props, children),
-    NavbarBrand: ({ children, ...props }) => React.createElement('div', props, children),
-    NavbarContent: ({ children, ...props }) => React.createElement('div', props, children),
-    NavbarItem: ({ children, ...props }) => React.createElement('div', props, children),
-    Link: ({ children, ...props }) => React.createElement('a', props, children),
-  }
-})
+    Button: ({ children, ...props }) =>
+      React.createElement("button", props, children),
+    Navbar: ({ children, ...props }) =>
+      React.createElement("nav", props, children),
+    NavbarBrand: ({ children, ...props }) =>
+      React.createElement("div", props, children),
+    NavbarContent: ({ children, ...props }) =>
+      React.createElement("div", props, children),
+    NavbarItem: ({ children, ...props }) =>
+      React.createElement("div", props, children),
+    Link: ({ children, ...props }) => React.createElement("a", props, children),
+  };
+});
 
 // Next.js Router のモック
-jest.mock('next/navigation', () => ({
+jest.mock("next/navigation", () => ({
   useRouter() {
     return {
       push: jest.fn(),
@@ -55,23 +60,23 @@ jest.mock('next/navigation', () => ({
       back: jest.fn(),
       forward: jest.fn(),
       refresh: jest.fn(),
-    }
+    };
   },
   useSearchParams() {
-    return new URLSearchParams()
+    return new URLSearchParams();
   },
   usePathname() {
-    return ''
+    return "";
   },
-}))
+}));
 
 // GitHub API のモック設定
-global.fetch = jest.fn()
+global.fetch = jest.fn();
 
 // Window オブジェクトのモック（必要に応じて）
-Object.defineProperty(window, 'matchMedia', {
+Object.defineProperty(window, "matchMedia", {
   writable: true,
-  value: jest.fn().mockImplementation(query => ({
+  value: jest.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
@@ -81,18 +86,18 @@ Object.defineProperty(window, 'matchMedia', {
     removeEventListener: jest.fn(),
     dispatchEvent: jest.fn(),
   })),
-})
+});
 
 // Intersection Observer のモック（無限スクロール用）
 global.IntersectionObserver = class IntersectionObserver {
   constructor() {}
   observe() {
-    return null
+    return null;
   }
   disconnect() {
-    return null
+    return null;
   }
   unobserve() {
-    return null
+    return null;
   }
-}
+};

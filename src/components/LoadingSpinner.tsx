@@ -1,63 +1,65 @@
-'use client'
+"use client";
 
 // ローディングスピナーコンポーネント
-import { Spinner, Card, CardBody } from '@heroui/react'
+import { Spinner, Card, CardBody } from "@heroui/react";
 
-import { cn } from '@/lib/utils'
+import { cn } from "@/lib/utils";
 
 interface LoadingSpinnerProps {
-  message?: string
-  size?: 'sm' | 'md' | 'lg'
-  className?: string
-  variant?: 'default' | 'card' | 'fullscreen'
+  message?: string;
+  size?: "sm" | "md" | "lg";
+  className?: string;
+  variant?: "default" | "card" | "fullscreen";
 }
 
-export function LoadingSpinner({ 
-  message = '読み込み中...', 
-  size = 'lg',
+export function LoadingSpinner({
+  message = "読み込み中...",
+  size = "lg",
   className,
-  variant = 'default'
+  variant = "default",
 }: LoadingSpinnerProps) {
   const spinnerContent = (
     <div className="flex flex-col items-center gap-3">
       <Spinner size={size} color="primary" />
       {message && (
-        <p className={cn(
-          'text-default-500',
-          size === 'sm' ? 'text-xs' : size === 'md' ? 'text-sm' : 'text-base'
-        )}>
+        <p
+          className={cn(
+            "text-default-500",
+            size === "sm" ? "text-xs" : size === "md" ? "text-sm" : "text-base",
+          )}
+        >
           {message}
         </p>
       )}
     </div>
-  )
+  );
 
-  if (variant === 'fullscreen') {
+  if (variant === "fullscreen") {
     return (
-      <div className={cn(
-        'fixed inset-0 bg-white/80 dark:bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center',
-        className
-      )}>
+      <div
+        className={cn(
+          "fixed inset-0 bg-white/80 dark:bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center",
+          className,
+        )}
+      >
         {spinnerContent}
       </div>
-    )
+    );
   }
 
-  if (variant === 'card') {
+  if (variant === "card") {
     return (
-      <Card className={cn('mx-auto max-w-sm', className)}>
-        <CardBody className="text-center py-12">
-          {spinnerContent}
-        </CardBody>
+      <Card className={cn("mx-auto max-w-sm", className)}>
+        <CardBody className="text-center py-12">{spinnerContent}</CardBody>
       </Card>
-    )
+    );
   }
 
   return (
-    <div className={cn('flex justify-center py-8', className)}>
+    <div className={cn("flex justify-center py-8", className)}>
       {spinnerContent}
     </div>
-  )
+  );
 }
 
 // 検索結果用のスケルトンローダー
@@ -103,7 +105,7 @@ export function RepositoryCardSkeleton({ count = 6 }: { count?: number }) {
         </Card>
       ))}
     </div>
-  )
+  );
 }
 
 // 検索フォーム用のスケルトンローダー
@@ -118,7 +120,7 @@ export function SearchFormSkeleton() {
         </div>
       </CardBody>
     </Card>
-  )
+  );
 }
 
 // リポジトリ詳細用のスケルトンローダー
@@ -135,7 +137,7 @@ export function RepositoryDetailSkeleton() {
               <div className="h-4 bg-default-200 rounded animate-pulse w-1/3" />
             </div>
           </div>
-          
+
           <div className="space-y-2 mb-6">
             <div className="h-4 bg-default-200 rounded animate-pulse w-full" />
             <div className="h-4 bg-default-200 rounded animate-pulse w-3/4" />
@@ -158,7 +160,10 @@ export function RepositoryDetailSkeleton() {
               <div className="h-6 bg-default-200 rounded animate-pulse w-32 mb-4" />
               <div className="space-y-3">
                 {Array.from({ length: 8 }).map((_, i) => (
-                  <div key={i} className="h-4 bg-default-200 rounded animate-pulse w-full" />
+                  <div
+                    key={i}
+                    className="h-4 bg-default-200 rounded animate-pulse w-full"
+                  />
                 ))}
               </div>
             </CardBody>
@@ -186,7 +191,10 @@ export function RepositoryDetailSkeleton() {
               <div className="h-5 bg-default-200 rounded animate-pulse w-32 mb-4" />
               <div className="grid grid-cols-3 gap-2">
                 {Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="h-12 bg-default-200 rounded animate-pulse" />
+                  <div
+                    key={i}
+                    className="h-12 bg-default-200 rounded animate-pulse"
+                  />
                 ))}
               </div>
             </CardBody>
@@ -194,5 +202,5 @@ export function RepositoryDetailSkeleton() {
         </div>
       </div>
     </div>
-  )
+  );
 }

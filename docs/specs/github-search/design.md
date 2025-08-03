@@ -63,7 +63,7 @@ src/
 │   ├── not-found.tsx                 # Global 404ページ
 │   └── loading.tsx                   # Global Loading UI
 ├── components/                       # 共通コンポーネント
-│   ├── ui/                          # HeroUI基盤コンポーネント  
+│   ├── ui/                          # HeroUI基盤コンポーネント
 │   ├── layout/                      # レイアウトコンポーネント
 │   │   ├── Header.tsx
 │   │   ├── Footer.tsx
@@ -249,11 +249,11 @@ interface UseRepositoryDetailReturn {
 ```typescript
 // Request
 interface SearchRequest {
-  q: string;                    // 検索クエリ
-  page?: number;               // ページ番号 (default: 1)
-  per_page?: number;          // 件数 (default: 30, max: 100)
-  sort?: 'stars' | 'forks' | 'updated';  // ソート条件
-  order?: 'asc' | 'desc';     // ソート順
+  q: string; // 検索クエリ
+  page?: number; // ページ番号 (default: 1)
+  per_page?: number; // 件数 (default: 30, max: 100)
+  sort?: "stars" | "forks" | "updated"; // ソート条件
+  order?: "asc" | "desc"; // ソート順
 }
 
 // Response
@@ -279,14 +279,15 @@ interface ApiError {
 ```typescript
 // Response
 interface RepositoryDetailResponse extends Repository {
-  readme?: string;            // README内容
-  topics: string[];          // トピック
-  license?: {               // ライセンス情報
+  readme?: string; // README内容
+  topics: string[]; // トピック
+  license?: {
+    // ライセンス情報
     name: string;
     spdx_id: string;
   };
   contributors_count?: number; // コントリビューター数
-  default_branch: string;     // デフォルトブランチ
+  default_branch: string; // デフォルトブランチ
 }
 ```
 
@@ -301,16 +302,16 @@ interface SearchState {
   repositories: Repository[];
   isLoading: boolean;
   error: string | null;
-  
+
   // ページネーション
   currentPage: number;
   hasMore: boolean;
   totalCount: number;
-  
+
   // フィルター・ソート
-  sort: 'stars' | 'forks' | 'updated';
-  order: 'asc' | 'desc';
-  
+  sort: "stars" | "forks" | "updated";
+  order: "asc" | "desc";
+
   // アクション
   setQuery: (query: string) => void;
   setRepositories: (repositories: Repository[]) => void;
@@ -326,20 +327,20 @@ interface SearchState {
 ```typescript
 interface UIState {
   // グローバルUI状態
-  theme: 'light' | 'dark';
-  
+  theme: "light" | "dark";
+
   // モーダル・ダイアログ
   isModalOpen: boolean;
   modalContent: React.ReactNode | null;
-  
+
   // 通知
   notifications: Notification[];
-  
+
   // アクション
-  setTheme: (theme: 'light' | 'dark') => void;
+  setTheme: (theme: "light" | "dark") => void;
   openModal: (content: React.ReactNode) => void;
   closeModal: () => void;
-  addNotification: (notification: Omit<Notification, 'id'>) => void;
+  addNotification: (notification: Omit<Notification, "id">) => void;
   removeNotification: (id: string) => void;
 }
 ```
@@ -350,44 +351,45 @@ interface UIState {
 
 #### 3.1.1 フロントエンド
 
-| 技術 | バージョン | 選定理由 |
-|------|------------|----------|
-| **Next.js** | 15.4.5 | **App Router必須**、Server Components、RSC対応 |
-| **React** | 19.1.0 | UI構築、Server Components対応、並行機能 |
-| **TypeScript** | 5.x | 型安全性、App Router完全対応 |
-| **HeroUI** | 2.8.2 | React 19対応、アクセシビリティ |
-| **Tailwind CSS** | 4.x | ユーティリティファースト、App Router最適化 |
+| 技術             | バージョン | 選定理由                                       |
+| ---------------- | ---------- | ---------------------------------------------- |
+| **Next.js**      | 15.4.5     | **App Router必須**、Server Components、RSC対応 |
+| **React**        | 19.1.0     | UI構築、Server Components対応、並行機能        |
+| **TypeScript**   | 5.x        | 型安全性、App Router完全対応                   |
+| **HeroUI**       | 2.8.2      | React 19対応、アクセシビリティ                 |
+| **Tailwind CSS** | 4.x        | ユーティリティファースト、App Router最適化     |
 
 #### 3.1.2 状態管理・データフェッチ
 
-| 技術 | バージョン | 選定理由 |
-|------|------------|----------|
-| **Zustand** | 5.0.7 | 軽量、シンプルなAPI、TypeScript対応 |
-| **SWR** | 2.3.4 | キャッシュ、リアルタイム更新、エラーハンドリング |
+| 技術        | バージョン | 選定理由                                         |
+| ----------- | ---------- | ------------------------------------------------ |
+| **Zustand** | 5.0.7      | 軽量、シンプルなAPI、TypeScript対応              |
+| **SWR**     | 2.3.4      | キャッシュ、リアルタイム更新、エラーハンドリング |
 
 #### 3.1.3 テスト・品質管理ツール
 
-| 技術 | バージョン | 選定理由 |
-|------|------------|----------|
-| **Jest** | 30.0.5 | React Testing Library統合、App Router対応 |
-| **@testing-library/react** | 16.3.0 | Server/Client Components対応 |
-| **@testing-library/jest-dom** | 6.6.4 | DOM assertion拡張 |
-| **Playwright** | 1.54.1 | E2Eテスト、クロスブラウザ対応 |
+| 技術                          | バージョン | 選定理由                                  |
+| ----------------------------- | ---------- | ----------------------------------------- |
+| **Jest**                      | 30.0.5     | React Testing Library統合、App Router対応 |
+| **@testing-library/react**    | 16.3.0     | Server/Client Components対応              |
+| **@testing-library/jest-dom** | 6.6.4      | DOM assertion拡張                         |
+| **Playwright**                | 1.54.1     | E2Eテスト、クロスブラウザ対応             |
 
 #### 3.1.4 開発・ビルドツール
 
-| 技術 | バージョン | 選定理由 |
-|------|------------|----------|
-| **npm** | latest | 標準パッケージマネージャー |
-| **ESLint** | 9.x | App Router対応ルール |
-| **Prettier** | latest | コードフォーマッター |
-| **Husky** | 9.1.7 | Git hooks、テスト自動実行 |
+| 技術         | バージョン | 選定理由                   |
+| ------------ | ---------- | -------------------------- |
+| **npm**      | latest     | 標準パッケージマネージャー |
+| **ESLint**   | 9.x        | App Router対応ルール       |
+| **Prettier** | latest     | コードフォーマッター       |
+| **Husky**    | 9.1.7      | Git hooks、テスト自動実行  |
 
 ### 3.2 選定理由詳細
 
 #### 3.2.1 HeroUI vs 他のUIライブラリ
 
 **選定理由:**
+
 - モダンなデザインシステム
 - React Server Components対応
 - 優れたアクセシビリティ
@@ -395,6 +397,7 @@ interface UIState {
 - 軽量なバンドルサイズ
 
 **代替案検討:**
+
 - **Chakra UI**: 機能豊富だがバンドルサイズが大きい
 - **Material-UI**: 成熟しているがデザインの制約が多い
 - **Ant Design**: 企業向けで個人プロジェクトには重い
@@ -402,12 +405,14 @@ interface UIState {
 #### 3.2.2 Zustand vs 他の状態管理
 
 **選定理由:**
+
 - 軽量（2KB未満）
 - ボイラープレート不要
 - TypeScript完全対応
 - 学習コストが低い
 
 **代替案検討:**
+
 - **Redux Toolkit**: 高機能だが複雑
 - **Context API**: パフォーマンス問題
 - **Jotai**: 原子的だが学習コスト高
@@ -423,9 +428,9 @@ interface UIState {
 const SafeDescription: React.FC<{ description: string }> = ({ description }) => {
   // DOMPurifyを使用してHTMLサニタイズ
   const sanitizedDescription = DOMPurify.sanitize(description);
-  
+
   return (
-    <div 
+    <div
       dangerouslySetInnerHTML={{ __html: sanitizedDescription }}
       className="text-default-600"
     />
@@ -437,18 +442,18 @@ const SafeDescription: React.FC<{ description: string }> = ({ description }) => 
 
 ```typescript
 // Next.js API Routes での CSRF 対策
-import { headers } from 'next/headers';
+import { headers } from "next/headers";
 
 export async function POST(request: Request) {
   const headersList = headers();
-  const origin = headersList.get('origin');
-  const host = headersList.get('host');
-  
+  const origin = headersList.get("origin");
+  const host = headersList.get("host");
+
   // Origin ヘッダーの検証
   if (!origin || !origin.includes(host!)) {
-    return new Response('Forbidden', { status: 403 });
+    return new Response("Forbidden", { status: 403 });
   }
-  
+
   // 処理続行
 }
 ```
@@ -459,16 +464,16 @@ export async function POST(request: Request) {
 // GitHub API レート制限の管理
 class RateLimitManager {
   private requests: Map<string, number[]> = new Map();
-  
+
   canMakeRequest(userId: string): boolean {
     const now = Date.now();
     const userRequests = this.requests.get(userId) || [];
-    
+
     // 直近1時間のリクエスト数をチェック
     const recentRequests = userRequests.filter(
-      time => now - time < 60 * 60 * 1000
+      (time) => now - time < 60 * 60 * 1000,
     );
-    
+
     return recentRequests.length < 60; // GitHub API制限に合わせる
   }
 }
@@ -486,8 +491,8 @@ interface PublicRepository {
   description: string | null;
   // 個人情報（メールアドレス等）は除外
   owner: {
-    login: string;        // 公開情報のみ
-    avatar_url: string;   // 公開情報のみ
+    login: string; // 公開情報のみ
+    avatar_url: string; // 公開情報のみ
     // private情報は取得・保存しない
   };
 }
@@ -502,24 +507,24 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: '/(.*)',
+        source: "/(.*)",
         headers: [
           {
-            key: 'Strict-Transport-Security',
-            value: 'max-age=31536000; includeSubDomains'
+            key: "Strict-Transport-Security",
+            value: "max-age=31536000; includeSubDomains",
           },
           {
-            key: 'X-Frame-Options',
-            value: 'DENY'
+            key: "X-Frame-Options",
+            value: "DENY",
           },
           {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff'
-          }
-        ]
-      }
+            key: "X-Content-Type-Options",
+            value: "nosniff",
+          },
+        ],
+      },
     ];
-  }
+  },
 };
 ```
 
@@ -575,12 +580,12 @@ const swrConfig = {
   revalidateOnFocus: false,
   revalidateOnReconnect: true,
   refreshInterval: 5 * 60 * 1000, // 5分間隔でバックグラウンド更新
-  dedupingInterval: 10 * 1000,    // 10秒間の重複リクエスト防止
+  dedupingInterval: 10 * 1000, // 10秒間の重複リクエスト防止
   errorRetryCount: 3,
   shouldRetryOnError: (error) => {
     // 4xx エラーはリトライしない
     return error.status >= 500;
-  }
+  },
 };
 ```
 
@@ -589,17 +594,17 @@ const swrConfig = {
 ```typescript
 // Next.js API Routes でのキャッシュ設定
 export async function GET(request: Request) {
-  const response = await fetch('https://api.github.com/search/repositories', {
+  const response = await fetch("https://api.github.com/search/repositories", {
     // GitHub API リクエスト
   });
-  
+
   return new Response(response.body, {
     status: response.status,
     headers: {
-      'Content-Type': 'application/json',
-      'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600'
+      "Content-Type": "application/json",
+      "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
       // 5分間キャッシュ、10分間stale可能
-    }
+    },
   });
 }
 ```
@@ -612,23 +617,23 @@ export async function GET(request: Request) {
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
-    optimizePackageImports: ['@heroui/react'],
+    optimizePackageImports: ["@heroui/react"],
   },
   webpack: (config, { dev, isServer }) => {
     if (!dev && !isServer) {
       // プロダクションビルドでの最適化
       config.optimization.splitChunks = {
-        chunks: 'all',
+        chunks: "all",
         cacheGroups: {
           vendor: {
             test: /[\\/]node_modules[\\/]/,
-            name: 'vendors',
-            chunks: 'all',
+            name: "vendors",
+            chunks: "all",
           },
         },
       };
     }
-    
+
     return config;
   },
 };
@@ -642,12 +647,12 @@ const nextConfig = {
 
 ```typescript
 enum ErrorType {
-  NETWORK_ERROR = 'NETWORK_ERROR',
-  API_ERROR = 'API_ERROR',
-  VALIDATION_ERROR = 'VALIDATION_ERROR',
-  RATE_LIMIT_ERROR = 'RATE_LIMIT_ERROR',
-  NOT_FOUND_ERROR = 'NOT_FOUND_ERROR',
-  UNKNOWN_ERROR = 'UNKNOWN_ERROR'
+  NETWORK_ERROR = "NETWORK_ERROR",
+  API_ERROR = "API_ERROR",
+  VALIDATION_ERROR = "VALIDATION_ERROR",
+  RATE_LIMIT_ERROR = "RATE_LIMIT_ERROR",
+  NOT_FOUND_ERROR = "NOT_FOUND_ERROR",
+  UNKNOWN_ERROR = "UNKNOWN_ERROR",
 }
 
 interface AppError extends Error {
@@ -666,28 +671,43 @@ class ErrorHandler {
     if (error instanceof AppError) {
       return error;
     }
-    
+
     if (error instanceof Response) {
       return this.handleApiError(error);
     }
-    
-    if (error instanceof TypeError && error.message.includes('fetch')) {
-      return new AppError('ネットワークエラーが発生しました', ErrorType.NETWORK_ERROR);
+
+    if (error instanceof TypeError && error.message.includes("fetch")) {
+      return new AppError(
+        "ネットワークエラーが発生しました",
+        ErrorType.NETWORK_ERROR,
+      );
     }
-    
-    return new AppError('予期しないエラーが発生しました', ErrorType.UNKNOWN_ERROR);
+
+    return new AppError(
+      "予期しないエラーが発生しました",
+      ErrorType.UNKNOWN_ERROR,
+    );
   }
-  
+
   private static handleApiError(response: Response): AppError {
     switch (response.status) {
       case 403:
-        return new AppError('API利用制限に達しました', ErrorType.RATE_LIMIT_ERROR);
+        return new AppError(
+          "API利用制限に達しました",
+          ErrorType.RATE_LIMIT_ERROR,
+        );
       case 404:
-        return new AppError('リポジトリが見つかりません', ErrorType.NOT_FOUND_ERROR);
+        return new AppError(
+          "リポジトリが見つかりません",
+          ErrorType.NOT_FOUND_ERROR,
+        );
       case 422:
-        return new AppError('検索条件が正しくありません', ErrorType.VALIDATION_ERROR);
+        return new AppError(
+          "検索条件が正しくありません",
+          ErrorType.VALIDATION_ERROR,
+        );
       default:
-        return new AppError('APIエラーが発生しました', ErrorType.API_ERROR);
+        return new AppError("APIエラーが発生しました", ErrorType.API_ERROR);
     }
   }
 }
@@ -699,10 +719,10 @@ class ErrorHandler {
 
 ```typescript
 enum LogLevel {
-  ERROR = 'error',
-  WARN = 'warn',
-  INFO = 'info',
-  DEBUG = 'debug'
+  ERROR = "error",
+  WARN = "warn",
+  INFO = "info",
+  DEBUG = "debug",
 }
 
 interface LogEntry {
@@ -719,26 +739,32 @@ interface LogEntry {
 
 ```typescript
 class Logger {
-  static error(message: string, error?: Error, context?: Record<string, unknown>) {
+  static error(
+    message: string,
+    error?: Error,
+    context?: Record<string, unknown>,
+  ) {
     const logEntry: LogEntry = {
       timestamp: new Date().toISOString(),
       level: LogLevel.ERROR,
       message,
       context: {
         ...context,
-        error: error ? {
-          name: error.name,
-          message: error.message,
-          stack: error.stack
-        } : undefined
-      }
+        error: error
+          ? {
+              name: error.name,
+              message: error.message,
+              stack: error.stack,
+            }
+          : undefined,
+      },
     };
-    
+
     // 開発環境ではコンソール出力
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === "development") {
       console.error(JSON.stringify(logEntry, null, 2));
     }
-    
+
     // 本番環境では外部ログサービスに送信
     // 例: Sentry, LogRocket, Datadog など
   }
@@ -753,11 +779,11 @@ class Logger {
 // Web Vitals の測定
 export function reportWebVitals(metric: NextWebVitalsMetric) {
   switch (metric.name) {
-    case 'CLS':
-    case 'FID':
-    case 'FCP':
-    case 'LCP':
-    case 'TTFB':
+    case "CLS":
+    case "FID":
+    case "FCP":
+    case "LCP":
+    case "TTFB":
       // メトリクスを外部サービスに送信
       sendToAnalytics(metric);
       break;
@@ -766,10 +792,10 @@ export function reportWebVitals(metric: NextWebVitalsMetric) {
 
 function sendToAnalytics(metric: NextWebVitalsMetric) {
   // Vercel Analytics, Google Analytics 等に送信
-  if (typeof window !== 'undefined' && window.gtag) {
-    window.gtag('event', metric.name, {
+  if (typeof window !== "undefined" && window.gtag) {
+    window.gtag("event", metric.name, {
       value: Math.round(metric.value),
-      event_label: metric.id
+      event_label: metric.id,
     });
   }
 }
@@ -787,11 +813,11 @@ class ErrorBoundary extends React.Component<
     super(props);
     this.state = { hasError: false };
   }
-  
+
   static getDerivedStateFromError(error: Error) {
     return { hasError: true };
   }
-  
+
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     // エラー情報を外部サービスに送信
     Logger.error('React Error Boundary', error, {
@@ -799,12 +825,12 @@ class ErrorBoundary extends React.Component<
       errorBoundary: true
     });
   }
-  
+
   render() {
     if (this.state.hasError) {
       return <ErrorFallback onRetry={() => this.setState({ hasError: false })} />;
     }
-    
+
     return this.props.children;
   }
 }
@@ -833,16 +859,19 @@ class ErrorBoundary extends React.Component<
 #### 7.1.2 App Router テスト分類
 
 **Server Components テスト**
+
 - RSC (React Server Components) のレンダリングテスト
 - Server Actions のテスト
 - データフェッチングロジックのテスト
 
 **Client Components テスト**
+
 - インタラクション（onClick、onChange）のテスト
 - 状態管理（useState、useEffect）のテスト
 - ユーザーイベントのテスト
 
 **API Routes テスト**
+
 - GET /api/repositories/search/route.ts
 - GET /api/repositories/[owner]/[name]/route.ts
 - エラーレスポンスの処理
@@ -851,22 +880,22 @@ class ErrorBoundary extends React.Component<
 
 ```typescript
 // jest.config.js
-const nextJest = require('next/jest');
+const nextJest = require("next/jest");
 
 const createJestConfig = nextJest({
-  dir: './',
+  dir: "./",
 });
 
 const customJestConfig = {
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
   moduleNameMapping: {
-    '^@/(.*)$': '<rootDir>/src/$1',
+    "^@/(.*)$": "<rootDir>/src/$1",
   },
-  testEnvironment: 'jest-environment-jsdom',
+  testEnvironment: "jest-environment-jsdom",
   collectCoverageFrom: [
-    'src/**/*.{js,jsx,ts,tsx}',
-    '!src/**/*.d.ts',
-    '!src/**/*.stories.{js,jsx,ts,tsx}',
+    "src/**/*.{js,jsx,ts,tsx}",
+    "!src/**/*.d.ts",
+    "!src/**/*.stories.{js,jsx,ts,tsx}",
   ],
   coverageThreshold: {
     global: {
@@ -884,7 +913,8 @@ module.exports = createJestConfig(customJestConfig);
 ---
 
 **文書情報**
+
 - 作成日: 2025-08-01
-- 更新日: 2025-08-01  
+- 更新日: 2025-08-01
 - バージョン: 1.0
 - 承認者: [未承認]

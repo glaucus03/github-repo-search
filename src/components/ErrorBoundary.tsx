@@ -1,26 +1,29 @@
-'use client'
+"use client";
 
 // エラーバウンダリーコンポーネント
-import { ExclamationTriangleIcon, ArrowPathIcon } from '@heroicons/react/24/outline'
-import { Card, CardBody, Button } from '@heroui/react'
-import React from 'react'
+import {
+  ExclamationTriangleIcon,
+  ArrowPathIcon,
+} from "@heroicons/react/24/outline";
+import { Card, CardBody, Button } from "@heroui/react";
+import React from "react";
 
 interface ErrorBoundaryState {
-  hasError: boolean
-  error?: Error
-  errorInfo?: React.ErrorInfo
+  hasError: boolean;
+  error?: Error;
+  errorInfo?: React.ErrorInfo;
 }
 
 interface ErrorBoundaryProps {
-  children: React.ReactNode
-  fallback?: React.ComponentType<ErrorFallbackProps>
-  onError?: (error: Error, errorInfo: React.ErrorInfo) => void
+  children: React.ReactNode;
+  fallback?: React.ComponentType<ErrorFallbackProps>;
+  onError?: (error: Error, errorInfo: React.ErrorInfo) => void;
 }
 
 interface ErrorFallbackProps {
-  error: Error
-  resetError: () => void
-  errorInfo?: React.ErrorInfo
+  error: Error;
+  resetError: () => void;
+  errorInfo?: React.ErrorInfo;
 }
 
 // デフォルトのエラーフォールバックコンポーネント
@@ -36,8 +39,8 @@ function DefaultErrorFallback({ error, resetError }: ErrorFallbackProps) {
             <br />
             ページを再読み込みするか、しばらく時間をおいて再度お試しください。
           </p>
-          
-          {process.env.NODE_ENV === 'development' && (
+
+          {process.env.NODE_ENV === "development" && (
             <details className="text-left mb-6 p-4 bg-default-100 rounded-lg">
               <summary className="cursor-pointer font-semibold text-danger mb-2">
                 開発者向け詳細情報
@@ -55,7 +58,7 @@ function DefaultErrorFallback({ error, resetError }: ErrorFallbackProps) {
               </pre>
             </details>
           )}
-          
+
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Button
               color="primary"
@@ -75,7 +78,7 @@ function DefaultErrorFallback({ error, resetError }: ErrorFallbackProps) {
             <Button
               variant="light"
               size="lg"
-              onClick={() => window.location.href = '/'}
+              onClick={() => (window.location.href = "/")}
             >
               ホームに戻る
             </Button>
@@ -83,13 +86,16 @@ function DefaultErrorFallback({ error, resetError }: ErrorFallbackProps) {
         </CardBody>
       </Card>
     </div>
-  )
+  );
 }
 
-export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+export class ErrorBoundary extends React.Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
   constructor(props: ErrorBoundaryProps) {
-    super(props)
-    this.state = { hasError: false }
+    super(props);
+    this.state = { hasError: false };
   }
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
@@ -97,7 +103,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
     return {
       hasError: true,
       error,
-    }
+    };
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
@@ -105,14 +111,14 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
     this.setState({
       error,
       errorInfo,
-    })
+    });
 
     // エラー情報をログに記録
-    console.error('ErrorBoundary caught an error:', error, errorInfo)
+    console.error("ErrorBoundary caught an error:", error, errorInfo);
 
     // カスタムエラーハンドラーがあれば実行
     if (this.props.onError) {
-      this.props.onError(error, errorInfo)
+      this.props.onError(error, errorInfo);
     }
 
     // 本来はここでエラー監視サービス（Sentry等）にエラーを送信する
@@ -123,23 +129,23 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
   }
 
   resetError = () => {
-    this.setState({ hasError: false, error: undefined, errorInfo: undefined })
-  }
+    this.setState({ hasError: false, error: undefined, errorInfo: undefined });
+  };
 
   render() {
     if (this.state.hasError && this.state.error) {
-      const FallbackComponent = this.props.fallback || DefaultErrorFallback
-      
+      const FallbackComponent = this.props.fallback || DefaultErrorFallback;
+
       return (
         <FallbackComponent
           error={this.state.error}
           resetError={this.resetError}
           errorInfo={this.state.errorInfo}
         />
-      )
+      );
     }
 
-    return this.props.children
+    return this.props.children;
   }
 }
 
@@ -147,36 +153,32 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
 export function APIErrorBoundary({ children }: { children: React.ReactNode }) {
   const handleError = (error: Error, errorInfo: React.ErrorInfo) => {
     // API関連のエラーの場合は特別な処理
-    if (error.message.includes('API') || error.message.includes('fetch')) {
-      console.error('API Error:', error, errorInfo)
+    if (error.message.includes("API") || error.message.includes("fetch")) {
+      console.error("API Error:", error, errorInfo);
       // API エラーの統計情報を収集するなど
     }
-  }
+  };
 
-  return (
-    <ErrorBoundary onError={handleError}>
-      {children}
-    </ErrorBoundary>
-  )
+  return <ErrorBoundary onError={handleError}>{children}</ErrorBoundary>;
 }
 
 // React Hook form for error handling
 export function useErrorHandler() {
-  const [error, setError] = React.useState<Error | null>(null)
+  const [error, setError] = React.useState<Error | null>(null);
 
   const handleError = React.useCallback((error: Error) => {
-    console.error('Error handled by useErrorHandler:', error)
-    setError(error)
-  }, [])
+    console.error("Error handled by useErrorHandler:", error);
+    setError(error);
+  }, []);
 
   const resetError = React.useCallback(() => {
-    setError(null)
-  }, [])
+    setError(null);
+  }, []);
 
   return {
     error,
     handleError,
     resetError,
     hasError: !!error,
-  }
+  };
 }

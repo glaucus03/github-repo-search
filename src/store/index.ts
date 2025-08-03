@@ -1,3 +1,3 @@
 // Zustand Store
-export * from './searchStore'
-export * from './uiStore'
+export * from "./searchStore";
+export * from "./uiStore";

@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
     // TypeScriptエラーの場合のみビルドを停止
     ignoreBuildErrors: false,
   },
-  // 静的生成を無効にして動的レンダリングを強制  
+  // 静的生成を無効にして動的レンダリングを強制
   // output: 'standalone', // ビルドエラーを防ぐため一時的に無効化
   // トレーリングスラッシュの設定
   trailingSlash: false,
